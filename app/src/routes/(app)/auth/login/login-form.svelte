@@ -15,19 +15,34 @@
 </script>
 
 <form method="POST" use:enhance>
-	<Form.Field {form} name="email">
-		<Form.Control let:attrs>
-			<Form.Label>Username</Form.Label>
-			<Input {...attrs} bind:value={$formData.email} />
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Field {form} name="password">
-		<Form.Control let:attrs>
-			<Form.Label>Password</Form.Label>
-			<Input {...attrs} type="password" bind:value={$formData.password} />
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Button>Login</Form.Button>
+	<div class="grid gap-4">
+		<div class="grid gap-2">
+			<Form.Field {form} name="email">
+				<Form.Control let:attrs>
+					<Form.Label>Username</Form.Label>
+					<Input {...attrs} bind:value={$formData.email} />
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+		</div>
+		<div class="grid gap-2">
+			<Form.Field {form} name="password">
+				<Form.Control let:attrs>
+					<div class="flex items-end">
+						<Form.Label>Password</Form.Label>
+						<a href="/auth/reset-password" class="ml-auto inline-block text-sm underline">
+							Forgot your password?
+						</a>
+					</div>
+					<Input {...attrs} type="password" bind:value={$formData.password} />
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+		</div>
+		<Form.Button class="w-full">Login</Form.Button>
+	</div>
+	<div class="mt-4 text-center text-sm">
+		Don&apos;t have an account?
+		<a href="/auth/register" class="underline"> Sign up </a>
+	</div>
 </form>
