@@ -19,7 +19,6 @@ export const actions: Actions = {
 
         try {
             const authData = await locals.pb.collection('users').authWithPassword(form.data.email as string, form.data.password as string);
-            console.log(authData)
         } catch (err) {
             console.log('Error on login: ', err);
             throw redirect(303, '?error');
