@@ -33,6 +33,7 @@
 		"bits-ui": "^0.21.1",
 		"clsx": "^2.1.0",
 		"formsnap": "^1.0.0",
+		"lucide-svelte": "^0.364.0",
 		"mode-watcher": "^0.3.0",
 		"pocketbase": "^0.21.1",
 		"svelte-radix": "^1.1.0",
