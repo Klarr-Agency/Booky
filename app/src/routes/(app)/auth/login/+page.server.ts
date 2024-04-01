@@ -1,21 +1,25 @@
-import { validateData } from "$lib/utils/formValidator.js";
-import { loginUserSchema } from "$lib/utils/schemas.js";
 import { error, fail, redirect } from "@sveltejs/kit";
 import type { Actions } from "./$types";
 
-export const actions: Actions = {
-    login: async ({ request, locals }) => {
-        const { formData, errors } = await validateData(await request.formData(), loginUserSchema);
+import type { PageServerLoad } from "./$types.js";
+import { superValidate } from "sveltekit-superforms";
+import { formSchema } from "./schema";
+import { zod } from "sveltekit-superforms/adapters";
+ 
+export const load: PageServerLoad = async () => {
+  return {
+    form: await superValidate(zod(formSchema)),
+  };
+};
 
-        if (errors) {
-            return fail(400, {
-                data: formData,
-                errors: errors.fieldErrors
-            });
-        }
+export const actions: Actions = {
+    default: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const form = await superValidate(formData, zod(formSchema));
 
         try {
-            const authData = await locals.pb.collection('users').authWithPassword(formData.email as string, formData.password as string);
+            const authData = await locals.pb.collection('users').authWithPassword(form.data.email as string, form.data.password as string);
+            console.log(authData)
         } catch (err) {
             console.log('Error on login: ', err);
             throw redirect(303, '?error');
