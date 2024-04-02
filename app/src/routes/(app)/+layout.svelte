@@ -1,11 +1,30 @@
 <script lang="ts">
 	import '$lib/app.pcss';
 	import { ModeWatcher } from 'mode-watcher';
+	import { page } from '$app/stores';
 
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import Menu from 'lucide-svelte/icons/menu';
+	import CircleUser from 'lucide-svelte/icons/circle-user';
+	import Book from 'lucide-svelte/icons/book';
+	
+	let navItem = [
+		{
+			label: 'Dashboard',
+			url: '/admin/dashboard'
+		},
+		{
+			label: 'Transactions',
+			url: '/admin/transactions'
+		},
+		{
+			label: 'Settings',
+			url: '/admin/settings'
+		}
+	];
+
 </script>
 
 <ModeWatcher />
@@ -15,25 +34,19 @@
 			class="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6"
 		>
 			<a href="##" class="flex items-center gap-2 text-lg font-semibold md:text-base">
+				<Book class="h-6 w-6" />
 				<span class="sr-only">Acme Inc</span>
 			</a>
-			<a href="##" class="text-foreground hover:text-foreground transition-colors"> Dashboard </a>
-			<a href="##" class="text-muted-foreground hover:text-foreground transition-colors">
-				Orders
-			</a>
-			<a href="##" class="text-muted-foreground hover:text-foreground transition-colors">
-				Products
-			</a>
-			<a href="##" class="text-muted-foreground hover:text-foreground transition-colors">
-				Customers
-			</a>
-			<a href="##" class="text-muted-foreground hover:text-foreground transition-colors">
-				Analytics
-			</a>
+			{#each navItem as item}
+				<a href={item.url} class="{$page.url.pathname.includes(item.url) ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors">
+					{item.label}
+				</a>
+			{/each}
 		</nav>
 		<Sheet.Root>
 			<Sheet.Trigger asChild let:builder>
 				<Button variant="outline" size="icon" class="shrink-0 md:hidden" builders={[builder]}>
+					<Menu class="h-5 w-5" />
 					<span class="sr-only">Toggle navigation menu</span>
 				</Button>
 			</Sheet.Trigger>
@@ -42,11 +55,11 @@
 					<a href="##" class="flex items-center gap-2 text-lg font-semibold">
 						<span class="sr-only">Acme Inc</span>
 					</a>
-					<a href="##" class="hover:text-foreground"> Dashboard </a>
-					<a href="##" class="text-muted-foreground hover:text-foreground"> Orders </a>
-					<a href="##" class="text-muted-foreground hover:text-foreground"> Products </a>
-					<a href="##" class="text-muted-foreground hover:text-foreground"> Customers </a>
-					<a href="##" class="text-muted-foreground hover:text-foreground"> Analytics </a>
+					{#each navItem as item}
+						<a href={item.url} class="{$page.url.pathname.includes(item.url) ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground">
+							{item.label}
+						</a>
+					{/each}
 				</nav>
 			</Sheet.Content>
 		</Sheet.Root>
@@ -54,6 +67,7 @@
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger asChild let:builder>
 					<Button builders={[builder]} variant="secondary" size="icon" class="rounded-full">
+						<CircleUser class="h-5 w-5" />
 						<span class="sr-only">Toggle user menu</span>
 					</Button>
 				</DropdownMenu.Trigger>
