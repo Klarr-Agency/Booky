@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
+	import type { PageData } from './$types.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
+	import RegisterForm from './register-form.svelte';
+
+	export let data: PageData;
 </script>
 
 <Card.Root class="min-w-[500px] max-w-sm">
@@ -11,21 +12,6 @@
 		<Card.Description>Enter your information to create an account</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<div class="grid gap-4">
-			<div class="grid gap-2">
-				<Label for="email">Email</Label>
-				<Input id="email" type="email" placeholder="m@example.com" required />
-			</div>
-			<div class="grid gap-2">
-				<Label class="flex flex-col justify-end min-h-[20px]" for="password">Password</Label>
-				<Input id="password" type="password" />
-			</div>
-			<Button type="submit" class="w-full">Create an account</Button>
-			<Button variant="outline" class="w-full">Sign up with Google</Button>
-		</div>
-		<div class="mt-4 text-center text-sm">
-			Already have an account?
-			<a href="/auth/login" class="underline"> Sign in </a>
-		</div>
+		<RegisterForm data={data.form} />
 	</Card.Content>
 </Card.Root>
