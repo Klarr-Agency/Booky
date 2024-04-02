@@ -14,7 +14,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<form method="POST" use:enhance>
+<form method="POST" action="?/login"  use:enhance>
 	<div class="grid gap-4">
 		<div class="grid gap-2">
 			<Form.Field {form} name="email">
