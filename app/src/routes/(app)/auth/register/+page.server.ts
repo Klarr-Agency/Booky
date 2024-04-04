@@ -21,7 +21,8 @@ export const actions: Actions = {
             const createUser = await locals.pb.collection('users').create({
                 email: form.data.email as string,
                 password: form.data.password as string,
-                passwordConfirm: form.data.password as string
+                passwordConfirm: form.data.password as string,
+                language: "english"
             });
         } catch (err) {
             console.log('Error on registration: ', err);
