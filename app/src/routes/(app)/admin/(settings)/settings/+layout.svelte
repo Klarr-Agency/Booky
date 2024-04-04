@@ -8,10 +8,6 @@
 			href: '/admin/settings'
 		},
 		{
-			title: 'Account',
-			href: '/admin/settings/account'
-		},
-		{
 			title: 'Appearance',
 			href: '/admin/settings/appearance'
 		},
