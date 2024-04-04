@@ -11,15 +11,25 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	default: async (event) => {
-		const form = await superValidate(event, zod(formSchema));
-		if (!form.valid) {
-			return fail(400, {
-				form,
-			});
-		}
-		return {
-			form,
-		};
-	},
-};
+    default: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const form = await superValidate(formData, zod(formSchema));
+
+        try {
+			 // Check if authStore.model is not null
+			 if (!locals.pb.authStore.model) {
+                console.log('No authenticated user found.');
+                return fail(401,{ message: 'No authenticated user found.' });
+            }
+
+            const userId = locals.pb.authStore.model.id;
+
+			const data = {
+				"theme": form.data.theme
+			}
+            const record = await locals.pb.collection('users').update(userId, data);
+        } catch (err) {
+            console.log('Error on updating theme: ', err);
+        }
+    },
+}
