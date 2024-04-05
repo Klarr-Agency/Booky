@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { get, readable } from "svelte/store";
-	import { Render, Subscribe, createRender, createTable } from "svelte-headless-table";
+	import { get, readable } from 'svelte/store';
+	import { Render, Subscribe, createRender, createTable } from 'svelte-headless-table';
 	import {
 		addColumnFilters,
 		addHiddenColumns,
 		addPagination,
 		addSelectedRows,
 		addSortBy,
-		addTableFilter,
-	} from "svelte-headless-table/plugins";
-	import type { Task } from "./schemas";
+		addTableFilter
+	} from 'svelte-headless-table/plugins';
+	import type { Task } from './schemas';
 	import {
 		DataTableCheckbox,
 		DataTableColumnHeader,
@@ -18,93 +18,102 @@
 		DataTableRowActions,
 		DataTableStatusCell,
 		DataTableTitleCell,
-		DataTableToolbar,
-	} from "./index";
+		DataTableToolbar
+	} from './index';
 
-	import * as Table from "$lib/components/ui/table";
+	import * as Table from '$lib/components/ui/table';
 
 	export let data: Task[];
+	export let showCheckbox: boolean = true;
+	export let showActions: boolean = true;
 
 	const table = createTable(readable(data), {
 		select: addSelectedRows(),
 		sort: addSortBy({
-			toggleOrder: ["asc", "desc"],
+			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination(),
 		filter: addTableFilter({
 			fn: ({ filterValue, value }) => {
 				return value.toLowerCase().includes(filterValue.toLowerCase());
-			},
+			}
 		}),
 		colFilter: addColumnFilters(),
-		hide: addHiddenColumns(),
+		hide: addHiddenColumns()
 	});
 
-	const columns = table.createColumns([
-		table.display({
-			id: "select",
-			header: (_, { pluginStates }) => {
-				const { allPageRowsSelected } = pluginStates.select;
-				return createRender(DataTableCheckbox, {
-					checked: allPageRowsSelected,
-					"aria-label": "Select all",
-				});
-			},
-			cell: ({ row }, { pluginStates }) => {
-				const { getRowState } = pluginStates.select;
-				const { isSelected } = getRowState(row);
-				return createRender(DataTableCheckbox, {
-					checked: isSelected,
-					"aria-label": "Select row",
-					class: "translate-y-[2px]",
-				});
-			},
-			plugins: {
-				sort: {
-					disable: true,
+	let dynamicColumns = [];
+
+	if (showCheckbox) {
+		dynamicColumns.push(
+			table.display({
+				id: 'select',
+				header: (_, { pluginStates }) => {
+					const { allPageRowsSelected } = pluginStates.select;
+					return createRender(DataTableCheckbox, {
+						checked: allPageRowsSelected,
+						'aria-label': 'Select all'
+					});
 				},
-			},
-		}),
+				cell: ({ row }, { pluginStates }) => {
+					const { getRowState } = pluginStates.select;
+					const { isSelected } = getRowState(row);
+					return createRender(DataTableCheckbox, {
+						checked: isSelected,
+						'aria-label': 'Select row',
+						class: 'translate-y-[2px]'
+					});
+				},
+				plugins: {
+					sort: {
+						disable: true
+					}
+				}
+			})
+		);
+	}
+
+	dynamicColumns.push(
 		table.column({
-			accessor: "id",
+			accessor: 'id',
 			header: () => {
-				return "Task";
+				return 'Task';
 			},
-			id: "task",
+			id: 'task',
 			plugins: {
 				sort: {
-					disable: true,
-				},
-			},
+					disable: true
+				}
+			}
 		}),
 		table.column({
-			accessor: "title",
-			header: "Title",
-			id: "title",
+			accessor: 'title',
+			header: 'Title',
+			id: 'title',
 			cell: ({ value, row }) => {
 				if (row.isData()) {
 					return createRender(DataTableTitleCell, {
 						value,
-						labelValue: row.original.label,
+						labelValue: row.original.label
 					});
 				}
 				return value;
-			},
+			}
 		}),
 		table.column({
-			accessor: "status",
-			header: "Status",
-			id: "status",
+			accessor: 'status',
+			header: 'Status',
+			id: 'status',
 			cell: ({ value }) => {
 				return createRender(DataTableStatusCell, {
-					value,
+					value
 				});
 			},
 			plugins: {
 				colFilter: {
 					fn: ({ filterValue, value }) => {
 						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || typeof value !== "string") return true;
+						if (!Array.isArray(filterValue) || typeof value !== 'string') return true;
 						return filterValue.some((filter) => {
 							return value.includes(filter);
 						});
@@ -112,24 +121,24 @@
 					initialFilterValue: [],
 					render: ({ filterValue }) => {
 						return get(filterValue);
-					},
-				},
-			},
+					}
+				}
+			}
 		}),
 		table.column({
-			accessor: "priority",
-			id: "priority",
-			header: "Priority",
+			accessor: 'priority',
+			id: 'priority',
+			header: 'Priority',
 			cell: ({ value }) => {
 				return createRender(DataTablePriorityCell, {
-					value,
+					value
 				});
 			},
 			plugins: {
 				colFilter: {
 					fn: ({ filterValue, value }) => {
 						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || typeof value !== "string") return true;
+						if (!Array.isArray(filterValue) || typeof value !== 'string') return true;
 
 						return filterValue.some((filter) => {
 							return value.includes(filter);
@@ -138,25 +147,32 @@
 					initialFilterValue: [],
 					render: ({ filterValue }) => {
 						return get(filterValue);
-					},
-				},
-			},
-		}),
-		table.display({
-			id: "actions",
-			header: () => {
-				return "";
-			},
-			cell: ({ row }) => {
-				if (row.isData() && row.original) {
-					return createRender(DataTableRowActions, {
-						row: row.original,
-					});
+					}
 				}
-				return "";
-			},
+			}
 		}),
-	]);
+	);
+
+	if (showActions) {
+		dynamicColumns.push(
+			table.display({
+				id: 'actions',
+				header: () => {
+					return '';
+				},
+				cell: ({ row }) => {
+					if (row.isData() && row.original) {
+						return createRender(DataTableRowActions, {
+							row: row.original
+						});
+					}
+					return '';
+				}
+			})
+		);
+	}
+	
+	const columns = table.createColumns(dynamicColumns);
 
 	const tableModel = table.createViewModel(columns);
 
@@ -172,19 +188,10 @@
 					<Subscribe rowAttrs={headerRow.attrs()}>
 						<Table.Row>
 							{#each headerRow.cells as cell (cell.id)}
-								<Subscribe
-									attrs={cell.attrs()}
-									let:attrs
-									props={cell.props()}
-									let:props
-								>
+								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
 									<Table.Head {...attrs}>
-										{#if cell.id !== "select" && cell.id !== "actions"}
-											<DataTableColumnHeader
-												{props}
-												{tableModel}
-												cellId={cell.id}
-											>
+										{#if cell.id !== 'select' && cell.id !== 'actions'}
+											<DataTableColumnHeader {props} {tableModel} cellId={cell.id}>
 												<Render of={cell.render()} /></DataTableColumnHeader
 											>
 										{:else}
@@ -205,7 +212,7 @@
 								{#each row.cells as cell (cell.id)}
 									<Subscribe attrs={cell.attrs()} let:attrs>
 										<Table.Cell {...attrs}>
-											{#if cell.id === "task"}
+											{#if cell.id === 'task'}
 												<div class="w-[80px]">
 													<Render of={cell.render()} />
 												</div>
@@ -220,9 +227,7 @@
 					{/each}
 				{:else}
 					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">
-							No results.
-						</Table.Cell>
+						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
 					</Table.Row>
 				{/if}
 			</Table.Body>
