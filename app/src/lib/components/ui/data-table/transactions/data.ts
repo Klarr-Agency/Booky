@@ -23,6 +23,10 @@ export const labels = [
 		value: "hosting",
 		label: "Hosting",
 	},
+    {
+		value: "services",
+		label: "Services",
+	},
 ];
 
 export const statuses = [
