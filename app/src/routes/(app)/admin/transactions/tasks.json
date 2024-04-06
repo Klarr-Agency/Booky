@@ -4,14 +4,17 @@
 		"title": "You can't compress the program without quantifying the open-source SSD pixel!",
 		"status": "in progress",
 		"label": "documentation",
-		"priority": "medium"
+		"priority": "medium",
+		"type": "expense",
+		"description": "poulet"
 	},
 	{
 		"id": "TASK-7878",
 		"title": "Try to calculate the EXE feed, maybe it will index the multi-byte pixel!",
 		"status": "backlog",
 		"label": "documentation",
-		"priority": "medium"
+		"priority": "medium",
+		"type": "revenu"
 	},
 	{
 		"id": "TASK-7839",

@@ -9,21 +9,24 @@
 		addSortBy,
 		addTableFilter,
 	} from "svelte-headless-table/plugins";
-	import type { Task } from "./schemas";
+	import type { Transactions } from "./schemas";
 	import {
+		DataTableToolbar,
+        DataTableTypeCell,
+        DataTableColumnHeader,
+        DataTablePagination,
+        DataTableRowActions
+	} from "./index.js";
+    /* Default import */
+    import {
 		DataTableCheckbox,
-		DataTableColumnHeader,
-		DataTablePagination,
-		DataTablePriorityCell,
-		DataTableRowActions,
 		DataTableStatusCell,
 		DataTableTitleCell,
-		DataTableToolbar,
-	} from "./index.js";
+	} from "../index.js";
 
 	import * as Table from '$lib/components/ui/table';
 
-	export let data: Task[];
+	export let data: Transactions[];
 
 	const table = createTable(readable(data), {
 		select: addSelectedRows(),
@@ -68,9 +71,9 @@
 		table.column({
 			accessor: "id",
 			header: () => {
-				return "Task";
+				return "Transaction";
 			},
-			id: "task",
+			id: "transaction",
 			plugins: {
 				sort: {
 					disable: true,
@@ -91,7 +94,17 @@
 				return value;
 			},
 		}),
-		table.column({
+        table.column({
+			accessor: "description",
+			header: "Description",
+			id: "description"
+		}),
+        table.column({
+			accessor: "amount",
+			header: "Amount",
+			id: "amount"
+		}),
+		/*table.column({
 			accessor: "status",
 			header: "Status",
 			id: "status",
@@ -115,13 +128,13 @@
 					},
 				},
 			},
-		}),
+		}),*/
 		table.column({
-			accessor: "priority",
-			id: "priority",
-			header: "Priority",
+			accessor: "type",
+			id: "type",
+			header: "Type",
 			cell: ({ value }) => {
-				return createRender(DataTablePriorityCell, {
+				return createRender(DataTableTypeCell, {
 					value,
 				});
 			},
