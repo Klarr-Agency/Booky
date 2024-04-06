@@ -80,6 +80,11 @@
 			},
 		}),
 		table.column({
+			accessor: "date",
+			header: "Date",
+			id: "date"
+		}),
+		table.column({
 			accessor: "title",
 			header: "Title",
 			id: "title",
@@ -97,11 +102,6 @@
 			accessor: "description",
 			header: "Description",
 			id: "description"
-		}),
-        table.column({
-			accessor: "amount",
-			header: "Amount",
-			id: "amount"
 		}),
 		/*table.column({
 			accessor: "status",
@@ -153,6 +153,11 @@
 					},
 				},
 			},
+		}),
+		table.column({
+			accessor: "amount",
+			header: "Amount",
+			id: "amount"
 		}),
 		table.display({
 			id: "actions",

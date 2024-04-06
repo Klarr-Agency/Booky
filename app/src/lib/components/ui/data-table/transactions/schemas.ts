@@ -4,6 +4,7 @@ import { z } from "zod";
 // IRL, you will have a schema for your data models.
 export const transactionSchema = z.object({
 	id: z.string(),
+    date: z.string(),
 	title: z.string(),
     status: z.string(),
     label: z.string(),

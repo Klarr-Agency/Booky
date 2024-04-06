@@ -1,6 +1,7 @@
 [
     {
         "id": "016BU9629-0014",
+        "date": "05/05/2024",
         "title": "OpenAI API Invoice 016BU9629-0014",
         "status": "in progress",
         "label": "services",
@@ -10,6 +11,7 @@
     },
     {
         "id": "1699-96581",
+        "date": "05/05/2024",
         "title": "Supabase Pte Ltd #1699-96581",
         "status": "in progress",
         "label": "hosting",
