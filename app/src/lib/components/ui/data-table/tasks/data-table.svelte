@@ -11,15 +11,19 @@
 	} from "svelte-headless-table/plugins";
 	import type { Task } from "./schemas";
 	import {
-		DataTableCheckbox,
 		DataTableColumnHeader,
 		DataTablePagination,
 		DataTablePriorityCell,
 		DataTableRowActions,
-		DataTableStatusCell,
 		DataTableTitleCell,
 		DataTableToolbar,
 	} from "./index.js";
+
+	import {
+		DataTableCheckbox,
+		DataTableStatusCell,
+	} from "../index.js";
+
 
 	import * as Table from '$lib/components/ui/table';
 

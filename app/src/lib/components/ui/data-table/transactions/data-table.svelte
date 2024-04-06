@@ -15,13 +15,12 @@
         DataTableTypeCell,
         DataTableColumnHeader,
         DataTablePagination,
-        DataTableRowActions
+        DataTableRowActions,
+		DataTableTitleCell
 	} from "./index.js";
     /* Default import */
     import {
 		DataTableCheckbox,
-		DataTableStatusCell,
-		DataTableTitleCell,
 	} from "../index.js";
 
 	import * as Table from '$lib/components/ui/table';
@@ -71,7 +70,7 @@
 		table.column({
 			accessor: "id",
 			header: () => {
-				return "Transaction";
+				return "# Transaction";
 			},
 			id: "transaction",
 			plugins: {

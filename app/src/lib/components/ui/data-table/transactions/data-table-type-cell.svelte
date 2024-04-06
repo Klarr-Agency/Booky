@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { types } from "../data";
+	import { types } from "./data";
 	export let value: string;
 	const type = types.find((type) => type.value === value);
 	const Icon = type?.icon;
