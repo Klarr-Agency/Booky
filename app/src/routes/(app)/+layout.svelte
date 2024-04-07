@@ -9,7 +9,7 @@
 	import Menu from 'lucide-svelte/icons/menu';
 	import CircleUser from 'lucide-svelte/icons/circle-user';
 	import Book from 'lucide-svelte/icons/book';
-	
+
 	let navItem = [
 		{
 			label: 'Dashboard',
@@ -24,7 +24,6 @@
 			url: '/admin/settings'
 		}
 	];
-
 </script>
 
 <ModeWatcher />
@@ -38,7 +37,12 @@
 				<span class="sr-only">Acme Inc</span>
 			</a>
 			{#each navItem as item}
-				<a href={item.url} class="{$page.url.pathname.includes(item.url) ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors">
+				<a
+					href={item.url}
+					class="{$page.url.pathname.includes(item.url)
+						? 'text-foreground'
+						: 'text-muted-foreground'} hover:text-foreground transition-colors"
+				>
 					{item.label}
 				</a>
 			{/each}
@@ -56,7 +60,12 @@
 						<span class="sr-only">Acme Inc</span>
 					</a>
 					{#each navItem as item}
-						<a href={item.url} class="{$page.url.pathname.includes(item.url) ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground">
+						<a
+							href={item.url}
+							class="{$page.url.pathname.includes(item.url)
+								? 'text-foreground'
+								: 'text-muted-foreground'} hover:text-foreground"
+						>
 							{item.label}
 						</a>
 					{/each}
@@ -74,11 +83,15 @@
 				<DropdownMenu.Content align="end">
 					<DropdownMenu.Label>My Account</DropdownMenu.Label>
 					<DropdownMenu.Separator />
-					
+
 					<DropdownMenu.Item><a href="/admin/settings">Settings</a></DropdownMenu.Item>
 					<DropdownMenu.Item>Support</DropdownMenu.Item>
 					<DropdownMenu.Separator />
-					<DropdownMenu.Item>Logout</DropdownMenu.Item>
+					<DropdownMenu.Item>
+						<form action="logout" method="POST">
+							<button>Logout</button>
+						</form>
+					</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</div>
