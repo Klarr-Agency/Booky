@@ -2,7 +2,7 @@
 A user-friendly app for tracking business expenses and revenue, designed to simplify financial management for entrepreneurs and small business owners.
 
 ## Features
-- [ ] Login, registration, reset password, logout
+- [x] Login, registration, reset password, logout
 - [ ] Light/Dark theme
 - [ ] Edit user profile
 ***
