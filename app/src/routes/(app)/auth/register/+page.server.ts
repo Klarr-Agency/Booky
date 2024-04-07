@@ -22,12 +22,15 @@ export const actions: Actions = {
                 email: form.data.email as string,
                 password: form.data.password as string,
                 passwordConfirm: form.data.password as string,
-                language: "english"
+                language: "english",
+                isEmailVerified: false, 
             });
+
+            await locals.pb.collection('users').requestVerification(form.data.email as string);
         } catch (err) {
             console.log('Error on registration: ', err);
             throw redirect(303, '?error');
         }
-        throw redirect(303, "/admin/dashboard");
+        throw redirect(303, "/auth/verify-email");
     },
 }
