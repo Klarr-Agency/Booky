@@ -33,9 +33,20 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export enum UsersThemeOptions {
+	"dark" = "dark",
+	"light" = "light",
+}
+
+export enum UsersLanguageOptions {
+	"english" = "english",
+	"french" = "french",
+}
 export type UsersRecord = {
 	avatar?: string
+	language?: UsersLanguageOptions
 	name?: string
+	theme?: UsersThemeOptions
 }
 
 // Response types include system fields and match responses from the PocketBase API
