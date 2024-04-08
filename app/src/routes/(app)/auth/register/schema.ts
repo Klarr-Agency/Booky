@@ -15,8 +15,7 @@ export const formSchema = z.object({
         .min(8, { message: 'Password must be a minimum of 8 characters & maximum 64 characters.' })
         .max(64, { message: 'Password must be a minimum of 8 characters & maximum 64 characters.' }),
         //.regex(new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/),'Password must be a minimum of 8 characters & contain at least one letter, one number, and one special character.'),
-    license_key: z.string().min(35).max(35).trim(),
-    terms: z.enum(['on'], { required_error: 'You must accept the terms and conditions' })
+    accountType: z.enum(['business', 'personal'], { required_error: 'You must select a specifc use' })
 }).superRefine(({ passwordConfirm, password }, ctx) => {
     if (passwordConfirm !== password) {
         ctx.addIssue({

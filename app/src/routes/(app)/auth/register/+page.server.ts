@@ -16,12 +16,12 @@ export const actions: Actions = {
     register: async ({ request, locals }) => {
         const formData = await request.formData();
         const form = await superValidate(formData, zod(formSchema));
-
         try {
             const createUser = await locals.pb.collection('users').create({
                 email: form.data.email as string,
                 password: form.data.password as string,
-                passwordConfirm: form.data.password as string,
+                passwordConfirm: form.data.passwordConfirm as string,
+                accountType: form.data.accountType as string,
                 language: "english",
                 isEmailVerified: false, 
             });
