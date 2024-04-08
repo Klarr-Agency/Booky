@@ -3,7 +3,7 @@ A user-friendly app for tracking business expenses and revenue, designed to simp
 
 ## Features
 - [x] Login, registration, reset password, logout
-- [ ] Light/Dark theme
+- [x] Light/Dark theme
 - [ ] Edit user profile
 ***
 Release v0.1

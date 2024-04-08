@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '$lib/app.pcss';
-	import { ModeWatcher } from 'mode-watcher';
+	import { ModeWatcher, setMode } from 'mode-watcher';
 	import { page } from '$app/stores';
 
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -9,6 +9,9 @@
 	import Menu from 'lucide-svelte/icons/menu';
 	import CircleUser from 'lucide-svelte/icons/circle-user';
 	import Book from 'lucide-svelte/icons/book';
+	import { onMount } from 'svelte';
+	export let data: any;
+	let theme: 'light' | 'dark' | 'system' = data.props.theme;
 
 	let navItem = [
 		{
@@ -24,6 +27,9 @@
 			url: '/admin/settings'
 		}
 	];
+	onMount(() => {
+		setMode(theme);
+	});
 </script>
 
 <ModeWatcher />

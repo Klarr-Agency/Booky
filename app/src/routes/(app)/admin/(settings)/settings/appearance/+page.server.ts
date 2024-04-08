@@ -5,9 +5,9 @@ import type { PageServerLoad } from "./$types.js";
 import { formSchema } from "./schema";
 
 export const load: PageServerLoad = async () => {
-	return {
-		form: await superValidate(zod(formSchema)),
-	};
+    return {
+        form: await superValidate(zod(formSchema))
+    };
 };
 
 export const actions: Actions = {
@@ -16,17 +16,17 @@ export const actions: Actions = {
         const form = await superValidate(formData, zod(formSchema));
 
         try {
-			 // Check if authStore.model is not null
-			 if (!locals.pb.authStore.model) {
+            // Check if authStore.model is not null
+            if (!locals.pb.authStore.model) {
                 console.log('No authenticated user found.');
-                return fail(401,{ message: 'No authenticated user found.' });
+                return fail(401, { message: 'No authenticated user found.' });
             }
 
             const userId = locals.pb.authStore.model.id;
 
-			const data = {
-				"theme": form.data.theme
-			}
+            const data = {
+                "theme": form.data.theme
+            }
             const record = await locals.pb.collection('users').update(userId, data);
         } catch (err) {
             console.log('Error on updating theme: ', err);
