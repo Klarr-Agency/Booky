@@ -5,7 +5,7 @@
 	const sidebarNavItems = [
 		{
 			title: 'Profile',
-			href: '/admin/settings'
+			href: '/admin/settings/profile'
 		},
 		{
 			title: 'Appearance',
