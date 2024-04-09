@@ -5,6 +5,7 @@
 	export let data: PageData;
 
 	let formData: any = data.form;
+	let userInfo: any = data.props?.userInfo;
 </script>
 
 <div class="space-y-6">
@@ -15,5 +16,5 @@
 		</p>
 	</div>
 	<Separator />
-	<ProfileForm data={formData}/>
+	<ProfileForm data={formData} {userInfo}/>
 </div>

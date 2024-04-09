@@ -11,9 +11,14 @@ export async function load({ locals }) {
 
         const record = await locals.pb.collection('users').getOne(userId);
         const theme: "light" | "dark" = record.theme || 'system';
+        const userInfo = {
+            "username": record.username,
+            "name": record.name
+        };
         return {
             props: {
                 theme,
+                userInfo
             }
         };
     } catch (err) {
