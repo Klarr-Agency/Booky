@@ -24,7 +24,7 @@
 		},
 		{
 			label: 'Settings',
-			url: '/admin/settings/profile'
+			url: '/admin/settings'
 		}
 	];
 	onMount(() => {
@@ -90,7 +90,7 @@
 					<DropdownMenu.Label>My Account</DropdownMenu.Label>
 					<DropdownMenu.Separator />
 
-					<DropdownMenu.Item><a href="/admin/settings/profile">Settings</a></DropdownMenu.Item>
+					<DropdownMenu.Item><a href="/admin/settings">Settings</a></DropdownMenu.Item>
 					<DropdownMenu.Item>Support</DropdownMenu.Item>
 					<DropdownMenu.Separator />
 					<DropdownMenu.Item>
