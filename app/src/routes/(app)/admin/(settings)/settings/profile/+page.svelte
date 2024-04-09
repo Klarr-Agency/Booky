@@ -9,9 +9,9 @@
 
 <div class="space-y-6">
 	<div>
-		<h3 class="text-lg font-medium">Appearance</h3>
+		<h3 class="text-lg font-medium">Profile</h3>
 		<p class="text-muted-foreground text-sm">
-			Customize the appearance of the app. Automatically switch between day and night themes.
+			This is how others will see you on the site.
 		</p>
 	</div>
 	<Separator />
