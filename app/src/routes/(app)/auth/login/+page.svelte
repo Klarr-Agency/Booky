@@ -5,7 +5,7 @@
 	export let data: PageData;
 </script>
 
-<Card.Root class="min-w-[500px] max-w-sm">
+<Card.Root class="max-w-sm md:min-w-[500px]">
 	<Card.Header class="min-h-[120px]">
 		<Card.Title class="text-2xl">Login</Card.Title>
 		<Card.Description>Enter your email below to login to your account</Card.Description>
