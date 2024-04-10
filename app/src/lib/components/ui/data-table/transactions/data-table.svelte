@@ -1,27 +1,25 @@
 <script lang="ts">
-	import { get, readable } from "svelte/store";
-	import { Render, Subscribe, createRender, createTable } from "svelte-headless-table";
+	import { get, readable } from 'svelte/store';
+	import { Render, Subscribe, createRender, createTable } from 'svelte-headless-table';
 	import {
 		addColumnFilters,
 		addHiddenColumns,
 		addPagination,
 		addSelectedRows,
 		addSortBy,
-		addTableFilter,
-	} from "svelte-headless-table/plugins";
-	import type { Transactions } from "./schemas";
+		addTableFilter
+	} from 'svelte-headless-table/plugins';
+	import type { Transactions } from './schemas';
 	import {
 		DataTableToolbar,
-        DataTableTypeCell,
-        DataTableColumnHeader,
-        DataTablePagination,
-        DataTableRowActions,
+		DataTableTypeCell,
+		DataTableColumnHeader,
+		DataTablePagination,
+		DataTableRowActions,
 		DataTableTitleCell
-	} from "./index.js";
-    /* Default import */
-    import {
-		DataTableCheckbox,
-	} from "../index.js";
+	} from './index.js';
+	/* Default import */
+	import { DataTableCheckbox } from '../index.js';
 
 	import * as Table from '$lib/components/ui/table';
 
@@ -30,26 +28,26 @@
 	const table = createTable(readable(data), {
 		select: addSelectedRows(),
 		sort: addSortBy({
-			toggleOrder: ["asc", "desc"],
+			toggleOrder: ['asc', 'desc']
 		}),
 		page: addPagination(),
 		filter: addTableFilter({
 			fn: ({ filterValue, value }) => {
 				return value.toLowerCase().includes(filterValue.toLowerCase());
-			},
+			}
 		}),
 		colFilter: addColumnFilters(),
-		hide: addHiddenColumns(),
+		hide: addHiddenColumns()
 	});
 
 	const columns = table.createColumns([
 		table.display({
-			id: "select",
+			id: 'select',
 			header: (_, { pluginStates }) => {
 				const { allPageRowsSelected } = pluginStates.select;
 				return createRender(DataTableCheckbox, {
 					checked: allPageRowsSelected,
-					"aria-label": "Select all",
+					'aria-label': 'Select all'
 				});
 			},
 			cell: ({ row }, { pluginStates }) => {
@@ -57,51 +55,46 @@
 				const { isSelected } = getRowState(row);
 				return createRender(DataTableCheckbox, {
 					checked: isSelected,
-					"aria-label": "Select row",
-					class: "translate-y-[2px]",
+					'aria-label': 'Select row',
+					class: 'translate-y-[2px]'
 				});
 			},
 			plugins: {
 				sort: {
-					disable: true,
-				},
-			},
+					disable: true
+				}
+			}
 		}),
 		table.column({
-			accessor: "id",
+			accessor: 'id',
 			header: () => {
-				return "# Transaction";
+				return '# Transaction';
 			},
-			id: "transaction",
+			id: 'transaction',
 			plugins: {
 				sort: {
-					disable: true,
-				},
-			},
+					disable: true
+				}
+			}
 		}),
 		table.column({
-			accessor: "date",
-			header: "Date",
-			id: "date"
+			accessor: 'date',
+			header: 'Date',
+			id: 'date'
 		}),
 		table.column({
-			accessor: "title",
-			header: "Title",
-			id: "title",
+			accessor: 'title',
+			header: 'Title',
+			id: 'title',
 			cell: ({ value, row }) => {
 				if (row.isData()) {
 					return createRender(DataTableTitleCell, {
 						value,
-						labelValue: row.original.label,
+						labelValue: row.original.label
 					});
 				}
 				return value;
-			},
-		}),
-        table.column({
-			accessor: "description",
-			header: "Description",
-			id: "description"
+			}
 		}),
 		/*table.column({
 			accessor: "status",
@@ -129,19 +122,19 @@
 			},
 		}),*/
 		table.column({
-			accessor: "type",
-			id: "type",
-			header: "Type",
+			accessor: 'type',
+			id: 'type',
+			header: 'Type',
 			cell: ({ value }) => {
 				return createRender(DataTableTypeCell, {
-					value,
+					value
 				});
 			},
 			plugins: {
 				colFilter: {
 					fn: ({ filterValue, value }) => {
 						if (filterValue.length === 0) return true;
-						if (!Array.isArray(filterValue) || typeof value !== "string") return true;
+						if (!Array.isArray(filterValue) || typeof value !== 'string') return true;
 
 						return filterValue.some((filter) => {
 							return value.includes(filter);
@@ -150,29 +143,29 @@
 					initialFilterValue: [],
 					render: ({ filterValue }) => {
 						return get(filterValue);
-					},
-				},
-			},
+					}
+				}
+			}
 		}),
 		table.column({
-			accessor: "amount",
-			header: "Amount",
-			id: "amount"
+			accessor: 'amount',
+			header: 'Amount',
+			id: 'amount'
 		}),
 		table.display({
-			id: "actions",
+			id: 'actions',
 			header: () => {
-				return "";
+				return '';
 			},
 			cell: ({ row }) => {
 				if (row.isData() && row.original) {
 					return createRender(DataTableRowActions, {
-						row: row.original,
+						row: row.original
 					});
 				}
-				return "";
-			},
-		}),
+				return '';
+			}
+		})
 	]);
 
 	const tableModel = table.createViewModel(columns);
@@ -189,21 +182,12 @@
 					<Subscribe rowAttrs={headerRow.attrs()}>
 						<Table.Row>
 							{#each headerRow.cells as cell (cell.id)}
-								<Subscribe
-									attrs={cell.attrs()}
-									let:attrs
-									props={cell.props()}
-									let:props
-								>
+								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
 									<Table.Head {...attrs}>
-										{#if cell.id !== "select" && cell.id !== "actions"}
-											<DataTableColumnHeader
-												{props}
-												{tableModel}
-												cellId={cell.id}
-											>
-												<Render of={cell.render()} /></DataTableColumnHeader
-											>
+										{#if cell.id !== 'select' && cell.id !== 'actions'}
+											<DataTableColumnHeader {props} {tableModel} cellId={cell.id}>
+												<Render of={cell.render()} />
+											</DataTableColumnHeader>
 										{:else}
 											<Render of={cell.render()} />
 										{/if}
@@ -222,8 +206,8 @@
 								{#each row.cells as cell (cell.id)}
 									<Subscribe attrs={cell.attrs()} let:attrs>
 										<Table.Cell {...attrs}>
-											{#if cell.id === "task"}
-												<div class="w-[80px]">
+											{#if cell.id === 'actions'}
+												<div class="w-[10px]">
 													<Render of={cell.render()} />
 												</div>
 											{:else}
@@ -237,9 +221,7 @@
 					{/each}
 				{:else}
 					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">
-							No results.
-						</Table.Cell>
+						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
 					</Table.Row>
 				{/if}
 			</Table.Body>
