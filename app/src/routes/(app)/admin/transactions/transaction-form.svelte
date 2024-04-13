@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { type Infer, type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { page } from '$app/stores';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import DatePicker from '$lib/components/ui/date-picker/data-picker.svelte';
@@ -65,7 +64,7 @@
 	}
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
-		amountString = "";
+		amountString = '';
 		open = false;
 		location.reload();
 	}
@@ -195,38 +194,26 @@
 				use:enhance
 				enctype="multipart/form-data"
 			>
-				<Form.Field {form} name="title">
-					<Form.Control let:attrs>
-						<Form.Label>Title</Form.Label>
-						<Input {...attrs} bind:value={$formData.title} />
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
+				<div class="flex gap-4">
+					<Form.Field {form} name="title" class="flex-grow">
+						<Form.Control let:attrs>
+							<Form.Label>Title</Form.Label>
+							<Input {...attrs} bind:value={$formData.title} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="receiptNumber" class="flex-grow">
+						<Form.Control let:attrs>
+							<Form.Label>Receipt Number</Form.Label>
+							<Input {...attrs} bind:value={$formData.receiptNumber} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
 				<Form.Field {form} name="document">
 					<Form.Control let:attrs>
 						<Form.Label>Import PDF</Form.Label>
 						<Input type="file" {...attrs} bind:value={$formData.document} />
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				<Form.Field {form} name="type">
-					<Form.Control let:attrs>
-						<Form.Label>Transaction Type</Form.Label>
-						<Select.Root
-							selected={selectedTransactionType}
-							onSelectedChange={(v) => {
-								v && ($formData.type = v.value);
-							}}
-						>
-							<Select.Trigger {...attrs}>
-								<Select.Value placeholder="Revenu" />
-							</Select.Trigger>
-							<Select.Content>
-								<Select.Item value="revenu">Revenu</Select.Item>
-								<Select.Item value="expense">Expense</Select.Item>
-							</Select.Content>
-						</Select.Root>
-						<input hidden bind:value={$formData.type} name={attrs.name} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -240,12 +227,57 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Field {form} name="amount">
+				<Form.Field {form} name="type">
 					<Form.Control let:attrs>
-						<Form.Label>Amount (USD)</Form.Label>
-						<Input type="number" {...attrs} bind:value={$formData.amount} />
+						<Form.Label>Transaction Type</Form.Label>
+						<Select.Root
+							selected={selectedTransactionType}
+							onSelectedChange={(v) => {
+								v && ($formData.type = v.value);
+							}}
+						>
+							<Select.Trigger {...attrs}>
+								<Select.Value placeholder="Revenue" />
+							</Select.Trigger>
+							<Select.Content>
+								<Select.Item value="revenue">Revenu</Select.Item>
+								<Select.Item value="expense">Expense</Select.Item>
+							</Select.Content>
+						</Select.Root>
+						<input hidden bind:value={$formData.type} name={attrs.name} />
 					</Form.Control>
+					<Form.FieldErrors />
 				</Form.Field>
+				<div class="flex gap-4">
+					<Form.Field {form} name="amount" class="flex-grow">
+						<Form.Control let:attrs>
+							<Form.Label>Amount</Form.Label>
+							<Input type="number" {...attrs} bind:value={amountString} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field {form} name="currency" class="min-w-[100px]">
+						<Form.Control let:attrs>
+							<Form.Label>Currency</Form.Label>
+							<Select.Root
+								selected={selectedCurrency}
+								onSelectedChange={(v) => {
+									v && ($formData.currency = v.value);
+								}}
+							>
+								<Select.Trigger {...attrs}>
+									<Select.Value placeholder="USD" />
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Item value="usd">USD</Select.Item>
+									<Select.Item value="cad">CAD</Select.Item>
+								</Select.Content>
+							</Select.Root>
+							<input hidden bind:value={$formData.currency} name={attrs.name} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
 				<Form.Button class="mt-4">{modalText.saveButton}</Form.Button>
 			</form>
 			<Drawer.Footer class="pt-2">
