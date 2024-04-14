@@ -24,6 +24,7 @@ Release v0.1
 - [ ] Edit
 - [ ] Delete
 - [ ] Upload document
+- [ ] Download document
 - [ ] Date filter
 ### Transaction label
 - [ ] Create
