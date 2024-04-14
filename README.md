@@ -8,8 +8,11 @@ A user-friendly app for tracking business expenses and revenue, designed to simp
 ***
 Release v0.1
 ***
-- [ ] Insert real values on dashboard
-- [ ] Add table on transactions page
+### Transactions
+- [x] Create transaction
+- [x] Display transaction
+- [ ] Edit transaction
+- [ ] Delete transaction
 
 ## How to use it locally
 1. Clone the project 
