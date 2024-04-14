@@ -1,19 +1,6 @@
 # Booky
 A user-friendly app for tracking business expenses and revenue, designed to simplify financial management for entrepreneurs and small business owners.
 
-## Features
-- [x] Login, registration, reset password, logout
-- [x] Light/Dark theme
-- [x] Edit user profile
-***
-Release v0.1
-***
-### Transactions
-- [x] Create transaction
-- [x] Display transaction
-- [ ] Edit transaction
-- [ ] Delete transaction
-
 ## How to use it locally
 1. Clone the project 
 2. In the backend folder run this command:
@@ -23,3 +10,20 @@ Release v0.1
 5. ```npm run dev```
 
 ## Deployment
+
+## Features
+- [x] Login, registration, reset password, logout
+- [x] Light/Dark theme
+- [x] Edit user profile
+***
+Release v0.1
+***
+### Transactions
+- [x] Display
+- [x] Create
+- [ ] Edit
+- [ ] Delete
+- [ ] Upload document
+### Transaction label
+- [ ] Create
+- [ ] Assign
