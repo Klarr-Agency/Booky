@@ -30,7 +30,7 @@ Release v0.1
 - [ ] Delete (default to general label)
 - [ ] Assign
 ### Dashboard
-- [ ] Display revenues/expenses/sales
+- [ ] Display revenues/expenses
 - [ ] Display latest transactions
 - [ ] Date filter
 - [ ] Expense/Revenu chart filtered by label
