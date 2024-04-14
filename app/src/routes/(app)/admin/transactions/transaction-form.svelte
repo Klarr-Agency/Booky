@@ -62,11 +62,37 @@
 		// Since month in JavaScript Date is 0-indexed, subtract 1 from the month
 		$formData.date = new Date(dateDetail.year, dateDetail.month - 1, dateDetail.day);
 	}
-	async function handleSubmit(event: Event) {
+	
+	type ValidFieldNames<T> = {
+		[P in keyof T]: T[P] extends Zod.ZodTypeAny ? P : never;
+	}[keyof T];
+
+	type FieldNames = ValidFieldNames<typeof formSchema.shape>;
+	const fieldNames: FieldNames[] = Object.keys(formSchema.shape) as FieldNames[];
+
+	async function validateFormAndManageDialog(event: Event) {
 		event.preventDefault();
-		amountString = '';
-		open = false;
-		location.reload();
+
+		// Validate each field individually
+		let allFieldsValid = true;
+
+		for (const fieldName of fieldNames) {
+			const validationErrors = await form.validate(fieldName);
+			if (validationErrors) {
+				// This checks if there are any validation errors returned
+				allFieldsValid = false;
+				console.error(`Validation error in ${fieldName}:`, validationErrors);
+			}
+		}
+
+		if (allFieldsValid) {
+			console.log('Form data is valid:', formData);
+			amountString = '';
+			open = false;
+			location.reload();
+		} else {
+			console.error('Form has errors:', form.errors);
+		}
 	}
 </script>
 
@@ -89,7 +115,7 @@
 				class="grid items-start gap-2"
 				use:enhance
 				enctype="multipart/form-data"
-				on:submit={handleSubmit}
+				on:submit={validateFormAndManageDialog}
 			>
 				<div class="flex gap-4">
 					<Form.Field {form} name="title" class="flex-grow">
@@ -193,6 +219,7 @@
 				class="grid items-start gap-4 px-4"
 				use:enhance
 				enctype="multipart/form-data"
+				on:submit={validateFormAndManageDialog}
 			>
 				<div class="flex gap-4">
 					<Form.Field {form} name="title" class="flex-grow">
