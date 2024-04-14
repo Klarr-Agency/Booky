@@ -62,6 +62,22 @@
 		// Since month in JavaScript Date is 0-indexed, subtract 1 from the month
 		$formData.date = new Date(dateDetail.year, dateDetail.month - 1, dateDetail.day);
 	}
+
+	function handleFileChange(event: Event) {
+        const input = event.target as HTMLInputElement; // Cast the target to HTMLInputElement
+        if (input && input.files && input.files.length > 0) {
+            const file = input.files[0]; // Get the first file
+            if (file instanceof File) {
+                $formData.document = file; // Assign the file if it is a File instance
+            } else {
+                console.error("The selected file is not an instance of File.");
+                $formData.document = undefined; // Set the file to undefined if not a File instance
+            }
+        } else {
+            console.error("No file selected or the file input is not properly configured.");
+            $formData.document = undefined; // Set the file to undefined if no files are selected
+        }
+    }
 	
 	type ValidFieldNames<T> = {
 		[P in keyof T]: T[P] extends Zod.ZodTypeAny ? P : never;
@@ -86,8 +102,10 @@
 		}
 
 		if (allFieldsValid) {
-			console.log('Form data is valid:', formData);
-			location.reload();
+			open = false;
+			setTimeout(function() {
+				location.reload();
+			}, 200);
 		} else {
 			console.error('Form has errors:', form.errors);
 		}
@@ -135,7 +153,7 @@
 				<Form.Field {form} name="document">
 					<Form.Control let:attrs>
 						<Form.Label>Import PDF</Form.Label>
-						<Input type="file" {...attrs} bind:value={$formData.document} />
+						<Input type="file" {...attrs} on:change="{handleFileChange}" />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -240,7 +258,7 @@
 				<Form.Field {form} name="document">
 					<Form.Control let:attrs>
 						<Form.Label>Import PDF</Form.Label>
-						<Input type="file" {...attrs} bind:value={$formData.document} />
+						<Input type="file" {...attrs} on:change="{handleFileChange}" />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

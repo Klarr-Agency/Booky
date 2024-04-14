@@ -1,11 +1,16 @@
 import { z } from "zod";
 
 const today = new Date();
+const allowedFileTypes = ["image/jpeg", "application/pdf", "image/png"];
 
 export const formSchema = z.object({
     receiptNumber: z.string(),
     title: z.string(),
-    document: z.instanceof(File).optional(),
+    document: z.instanceof(File).optional().refine(file => {
+        return file ? allowedFileTypes.includes(file.type) : true;
+    }, {
+        message: "Only JPEG, PDF, and PNG files are allowed.",
+    }),
     type: z.enum(['revenue', 'expense']),
     date: z.date().refine(date => date <= today, {
         message: "Date cannot be in the future.",

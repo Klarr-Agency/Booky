@@ -42,6 +42,7 @@ export const actions: Actions = {
             const data = {
                 "userId": userId,
                 "title": form.data.title as string,
+                "document": form.data.document,
                 "type": form.data.type as string,
                 "date": form.data.date,
                 "receiptNumber": form.data.receiptNumber as string,
