@@ -27,6 +27,10 @@ export const labels = [
 		value: "services",
 		label: "Services",
 	},
+	{
+		value: "general",
+		label: "General",
+	},
 ];
 
 export const statuses = [
@@ -65,8 +69,8 @@ export const types = [
 		icon: ArrowDown,
 	},
 	{
-		label: "Revenu",
-		value: "revenu",
+		label: "Revenue",
+		value: "revenue",
 		icon: ArrowUp,
 	},
 ];

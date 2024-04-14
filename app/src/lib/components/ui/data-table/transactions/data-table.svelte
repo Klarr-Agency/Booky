@@ -16,7 +16,8 @@
 		DataTableColumnHeader,
 		DataTablePagination,
 		DataTableRowActions,
-		DataTableTitleCell
+		DataTableTitleCell,
+		DataTableDateCell
 	} from './index.js';
 	/* Default import */
 	import { DataTableCheckbox } from '../index.js';
@@ -24,6 +25,14 @@
 	import * as Table from '$lib/components/ui/table';
 
 	export let data: Transactions[];
+
+	function formatDate(dateString:string) {
+		const date = new Date(dateString);
+		const day = date.getDate().toString().padStart(2, '0');
+		const month = (date.getMonth() + 1).toString().padStart(2, '0'); // January is 0!
+		const year = date.getFullYear();
+		return `${day}/${month}/${year}`;
+	}
 
 	const table = createTable(readable(data), {
 		select: addSelectedRows(),
@@ -66,11 +75,11 @@
 			}
 		}),
 		table.column({
-			accessor: 'id',
+			accessor: 'receiptNumber',
 			header: () => {
 				return '# Transaction';
 			},
-			id: 'transaction',
+			id: 'receiptNumber',
 			plugins: {
 				sort: {
 					disable: true
@@ -80,7 +89,15 @@
 		table.column({
 			accessor: 'date',
 			header: 'Date',
-			id: 'date'
+			id: 'date',
+			cell: ({ value, row }) => {
+				if (row.isData()) {
+					return createRender(DataTableDateCell, {
+						value:formatDate(value)
+					});
+				}
+				return formatDate(value);
+			}
 		}),
 		table.column({
 			accessor: 'title',
