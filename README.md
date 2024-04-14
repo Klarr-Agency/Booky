@@ -24,6 +24,16 @@ Release v0.1
 - [ ] Edit
 - [ ] Delete
 - [ ] Upload document
+- [ ] Date filter
 ### Transaction label
 - [ ] Create
+- [ ] Delete (default to general label)
 - [ ] Assign
+### Dashboard
+- [ ] Display revenues/expenses/sales
+- [ ] Display latest transactions
+- [ ] Date filter
+- [ ] Expense/Revenu chart filtered by label
+***
+Release v1
+***
