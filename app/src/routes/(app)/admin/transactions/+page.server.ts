@@ -1,6 +1,6 @@
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { type Actions, fail } from "@sveltejs/kit";
+import { type Actions, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types.js";
 import { formSchema } from "./schema";
 
@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     // Add pagination later
     const records = await locals.pb.collection('transactions').getFullList({
         sort: '-created',
-        fields: 'title,date,label,type,document,amount,receiptNumber, currency'
+        fields: 'id,title,date,label,type,document,amount,receiptNumber, currency'
     });
 
     return {
@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-    default: async ({ request, locals }) => {
+    createTransaction: async ({ request, locals }) => {
         const formData = await request.formData();
         const form = await superValidate(formData, zod(formSchema));
         if (!form.valid) {
@@ -48,10 +48,31 @@ export const actions: Actions = {
                 "amount": form.data.amount as number,
                 "currency": form.data.currency as string
             };
-  
+
             await locals.pb.collection('transactions').create(data);
         } catch (err) {
             console.log('Error on create transactions: ', err);
         }
+    },
+    deleteTransaction: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const transactionId = formData.get('transactionId');
+
+        if (typeof transactionId !== 'string' || !transactionId) {
+            return fail(400, { error: 'A valid transaction ID is required.' });
+        }
+
+        try {
+            // Check if authStore.model is not null
+            if (!locals.pb.authStore.model) {
+                console.log('No authenticated user found.');
+                return fail(401, { message: 'No authenticated user found.' });
+            }
+
+            await locals.pb.collection('transactions').delete(transactionId);
+        } catch (error) {
+            console.error("Failed to delete the transaction", error);
+        }
+        throw redirect(303, "/admin/transactions");
     },
 }

@@ -87,8 +87,6 @@
 
 		if (allFieldsValid) {
 			console.log('Form data is valid:', formData);
-			amountString = '';
-			open = false;
 			location.reload();
 		} else {
 			console.error('Form has errors:', form.errors);
@@ -112,6 +110,7 @@
 			</Dialog.Header>
 			<form
 				method="POST"
+				action="?/createTransaction" 
 				class="grid items-start gap-2"
 				use:enhance
 				enctype="multipart/form-data"
@@ -216,6 +215,7 @@
 			</Drawer.Header>
 			<form
 				method="POST"
+				action="?/createTransaction" 
 				class="grid items-start gap-4 px-4"
 				use:enhance
 				enctype="multipart/form-data"

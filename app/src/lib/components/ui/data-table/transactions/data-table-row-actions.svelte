@@ -1,12 +1,12 @@
 <script lang="ts">
-	import DotsHorizontal from "svelte-radix/DotsHorizontal.svelte";
-	import { labels } from "./data";
-	import { type Transactions, transactionSchema } from "./schemas";
-	import { Button } from "$lib/components/ui/button";
-	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+	import DotsHorizontal from 'svelte-radix/DotsHorizontal.svelte';
+	import { labels } from './data';
+	import { type Transactions, transactionSchema } from './schemas';
+	import { Button } from '$lib/components/ui/button';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 
 	export let row: Transactions;
-	const task = transactionSchema.parse(row);
+	const transaction = transactionSchema.parse(row);
 </script>
 
 <DropdownMenu.Root>
@@ -14,7 +14,7 @@
 		<Button
 			variant="ghost"
 			builders={[builder]}
-			class="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+			class="data-[state=open]:bg-muted flex h-8 w-8 p-0"
 		>
 			<DotsHorizontal class="h-4 w-4" />
 			<span class="sr-only">Open Menu</span>
@@ -26,7 +26,7 @@
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger>Labels</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
-				<DropdownMenu.RadioGroup value={task.label}>
+				<DropdownMenu.RadioGroup value={transaction.label}>
 					{#each labels as label}
 						<DropdownMenu.RadioItem value={label.value}>
 							{label.label}
@@ -36,9 +36,14 @@
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item>
-			Delete
-			<DropdownMenu.Shortcut>⌘⌫</DropdownMenu.Shortcut>
-		</DropdownMenu.Item>
+		<form method="POST" action="?/deleteTransaction">
+			<input hidden value={transaction.id} name="transactionId" />
+			<button type="submit" class="w-full">
+				<DropdownMenu.Item>
+					Delete
+					<DropdownMenu.Shortcut>⌘⌫</DropdownMenu.Shortcut>
+				</DropdownMenu.Item>
+			</button>
+		</form>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

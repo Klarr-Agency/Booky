@@ -22,7 +22,7 @@ Release v0.1
 - [x] Display
 - [x] Create
 - [ ] Edit
-- [ ] Delete
+- [x] Delete
 - [ ] Upload document
 - [ ] Download document
 - [ ] Date filter
