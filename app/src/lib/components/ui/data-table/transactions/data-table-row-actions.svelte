@@ -7,6 +7,30 @@
 
 	export let row: Transactions;
 	const transaction = transactionSchema.parse(row);
+
+	async function openDocument(e: Event) {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('download', transaction.id);
+
+        try {
+            const response = await fetch('?/downloadDocument', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+			const dataObject = JSON.parse(result.data);
+			const url = dataObject[3];
+			
+			if (url) {
+                window.open(url, '_blank');
+            } else {
+                console.error('URL not found in the response:', result);
+            }
+        } catch (error) {
+            console.error('Failed to fetch:', error);
+        }
+    }
 </script>
 
 <DropdownMenu.Root>
@@ -22,7 +46,12 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-[160px]" align="end">
 		<DropdownMenu.Item>Edit</DropdownMenu.Item>
-		<DropdownMenu.Item>Download</DropdownMenu.Item>
+		<form method="POST" action="?/downloadDocument" on:submit={openDocument}>
+			<input hidden value={transaction.id} name="download" />
+			<button type="submit" class="w-full">
+				<DropdownMenu.Item>Download</DropdownMenu.Item>
+			</button>
+		</form>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger>Labels</DropdownMenu.SubTrigger>

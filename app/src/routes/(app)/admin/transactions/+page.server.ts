@@ -76,4 +76,31 @@ export const actions: Actions = {
         }
         throw redirect(303, "/admin/transactions");
     },
+    downloadDocument: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const transactionId = formData.get('download');
+
+        if (typeof transactionId !== 'string' || !transactionId) {
+            return fail(400, { error: 'A valid transaction ID is required.' });
+        }
+
+        try {
+            // Check if authStore.model is not null
+            if (!locals.pb.authStore.model) {
+                console.log('No authenticated user found.');
+                return fail(401, { message: 'No authenticated user found.' });
+            }
+
+            const fileToken = await locals.pb.files.getToken();
+            const record = await locals.pb.collection('transactions').getOne(transactionId);
+            const url = locals.pb.files.getUrl(record, record.document, { 'token': fileToken });
+
+            return {
+                status: 200,
+                body: { url }
+            };
+        } catch (error) {
+            console.error("Failed to download the transaction", error);
+        }
+    }
 }
