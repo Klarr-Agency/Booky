@@ -10,6 +10,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { formSchema, type FormSchema } from './schema';
 	import { currentSelectedTransaction, isDialogOpen, formSubmitted } from './store';
+	import { convertStringToNumber } from '$lib/utils/utils';
 
 	export let data: SuperValidated<Infer<FormSchema>>;
 	export let createdTransactions: FormData[];
@@ -60,19 +61,11 @@
 				value: $formData.currency
 			}
 		: undefined;
-	// Convert string to number
-	$: amountNumber = Number(amountString);
-	$: $formData.amount = amountNumber;
 
 	$: if ($currentSelectedTransaction !== null) {
 		const transaction = createdTransactions.find((t: any) => t.id === $currentSelectedTransaction);
 		if (transaction) {
-			$formData.id = transaction.id;
-			$formData.title = transaction.title;
-			$formData.receiptNumber = transaction.receiptNumber;
-			$formData.type = transaction.type;
-			$formData.currency = transaction.currency;
-			$formData.amount = transaction.amount;
+			initializeFormData(transaction);
 		}
 		modalText = {
 			title: 'Edit transaction',
@@ -85,6 +78,19 @@
 			description: 'Tracks your revenues and expenses by adding a new transaction.',
 			saveButton: 'Save transaction'
 		};
+	}
+	$: $formData.amount = convertStringToNumber(amountString);
+
+
+	function initializeFormData(transaction: FormData) {
+		$formData.id = transaction.id;
+		$formData.title = transaction.title;
+		$formData.receiptNumber = transaction.receiptNumber;
+		$formData.type = transaction.type;
+		$formData.date = transaction.date;
+		$formData.currency = transaction.currency;
+		$formData.amount = transaction.amount;
+		amountString = transaction.amount.toString();
 	}
 
 	function handleDateChange(event: CustomEvent) {
