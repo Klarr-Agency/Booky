@@ -9,8 +9,33 @@
 	import * as Drawer from '$lib/components/ui/drawer';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { formSchema, type FormSchema } from './schema';
+	import { currentSelectedTransaction, isDialogOpen, formSubmitted } from './store';
 
 	export let data: SuperValidated<Infer<FormSchema>>;
+	export let createdTransactions: FormData[];
+
+	type ModalText = {
+		title: string;
+		description: string;
+		saveButton: string;
+	};
+
+	type FormData = {
+		id: string;
+		receiptNumber: string;
+		title: string;
+		type: 'revenue' | 'expense';
+		date: Date;
+		currency: string;
+		amount: number;
+		document?: File | undefined;
+	};
+
+	type ValidFieldNames<T> = {
+		[P in keyof T]: T[P] extends Zod.ZodTypeAny ? P : never;
+	}[keyof T];
+
+	type FieldNames = ValidFieldNames<typeof formSchema.shape>;
 
 	const form = superForm(data, {
 		validators: zodClient(formSchema)
@@ -20,13 +45,7 @@
 
 	let innerWidth: number;
 	let amountString = '';
-	let open = false;
-
-	let modalText = {
-		title: 'Add transaction',
-		description: 'Tracks your revenus and expenses by adding a new transaction.',
-		saveButton: 'Save transaction'
-	};
+	let modalText: ModalText;
 
 	$: selectedTransactionType = $formData.type
 		? {
@@ -44,6 +63,29 @@
 	// Convert string to number
 	$: amountNumber = Number(amountString);
 	$: $formData.amount = amountNumber;
+
+	$: if ($currentSelectedTransaction !== null) {
+		const transaction = createdTransactions.find((t: any) => t.id === $currentSelectedTransaction);
+		if (transaction) {
+			$formData.id = transaction.id;
+			$formData.title = transaction.title;
+			$formData.receiptNumber = transaction.receiptNumber;
+			$formData.type = transaction.type;
+			$formData.currency = transaction.currency;
+			$formData.amount = transaction.amount;
+		}
+		modalText = {
+			title: 'Edit transaction',
+			description: 'Update your transaction details.',
+			saveButton: 'Update transaction'
+		};
+	} else {
+		modalText = {
+			title: 'Add transaction',
+			description: 'Tracks your revenues and expenses by adding a new transaction.',
+			saveButton: 'Save transaction'
+		};
+	}
 
 	function handleDateChange(event: CustomEvent) {
 		const dateDetail = event.detail.date;
@@ -64,31 +106,26 @@
 	}
 
 	function handleFileChange(event: Event) {
-        const input = event.target as HTMLInputElement; // Cast the target to HTMLInputElement
-        if (input && input.files && input.files.length > 0) {
-            const file = input.files[0]; // Get the first file
-            if (file instanceof File) {
-                $formData.document = file; // Assign the file if it is a File instance
-            } else {
-                console.error("The selected file is not an instance of File.");
-                $formData.document = undefined; // Set the file to undefined if not a File instance
-            }
-        } else {
-            console.error("No file selected or the file input is not properly configured.");
-            $formData.document = undefined; // Set the file to undefined if no files are selected
-        }
-    }
-	
-	type ValidFieldNames<T> = {
-		[P in keyof T]: T[P] extends Zod.ZodTypeAny ? P : never;
-	}[keyof T];
+		const input = event.target as HTMLInputElement; // Cast the target to HTMLInputElement
+		if (input && input.files && input.files.length > 0) {
+			const file = input.files[0]; // Get the first file
+			if (file instanceof File) {
+				$formData.document = file; // Assign the file if it is a File instance
+			} else {
+				console.error('The selected file is not an instance of File.');
+				$formData.document = undefined; // Set the file to undefined if not a File instance
+			}
+		} else {
+			console.error('No file selected or the file input is not properly configured.');
+			$formData.document = undefined; // Set the file to undefined if no files are selected
+		}
+	}
 
-	type FieldNames = ValidFieldNames<typeof formSchema.shape>;
 	const fieldNames: FieldNames[] = Object.keys(formSchema.shape) as FieldNames[];
 
 	async function validateFormAndManageDialog(event: Event) {
 		event.preventDefault();
-
+		$formSubmitted = true;
 		// Validate each field individually
 		let allFieldsValid = true;
 
@@ -102,23 +139,43 @@
 		}
 
 		if (allFieldsValid) {
-			open = false;
-			setTimeout(function() {
+			$isDialogOpen = false;
+
+			setTimeout(function () {
 				location.reload();
 			}, 200);
 		} else {
 			console.error('Form has errors:', form.errors);
 		}
 	}
+
+	function resetDialog() {
+		if ($isDialogOpen && !$formSubmitted) {
+			currentSelectedTransaction.set(null);
+			$isDialogOpen = false;
+			amountString = '';
+			$formData = {
+				id: '',
+				receiptNumber: '',
+				title: '',
+				type: 'revenue',
+				date: new Date(),
+				currency: '',
+				amount: 0,
+				document: undefined
+			};
+		}
+		$formSubmitted = false;
+	}
 </script>
 
 <svelte:window bind:innerWidth />
 
 <div class="grid justify-start gap-2">
-	<Button on:click={() => (open = true)} class="ml-auto gap-1">Add transaction</Button>
+	<Button on:click={() => ($isDialogOpen = true)} class="ml-auto gap-1">Add transaction</Button>
 </div>
 {#if innerWidth > 768}
-	<Dialog.Root bind:open>
+	<Dialog.Root bind:open={$isDialogOpen} onOpenChange={resetDialog}>
 		<Dialog.Content class="sm:max-w-[600px]">
 			<Dialog.Header>
 				<Dialog.Title>{modalText.title}</Dialog.Title>
@@ -128,12 +185,13 @@
 			</Dialog.Header>
 			<form
 				method="POST"
-				action="?/createTransaction" 
+				action={$currentSelectedTransaction !== null ? '?/editTransaction' : '?/createTransaction'}
 				class="grid items-start gap-2"
 				use:enhance
 				enctype="multipart/form-data"
 				on:submit={validateFormAndManageDialog}
 			>
+				<input type="hidden" bind:value={$formData.id} name="id" />
 				<div class="flex gap-4">
 					<Form.Field {form} name="title" class="flex-grow">
 						<Form.Control let:attrs>
@@ -153,7 +211,7 @@
 				<Form.Field {form} name="document">
 					<Form.Control let:attrs>
 						<Form.Label>Import PDF</Form.Label>
-						<Input type="file" {...attrs} on:change="{handleFileChange}" />
+						<Input type="file" {...attrs} on:change={handleFileChange} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -223,7 +281,7 @@
 		</Dialog.Content>
 	</Dialog.Root>
 {:else if innerWidth < 768}
-	<Drawer.Root bind:open>
+	<Drawer.Root bind:open={$isDialogOpen} onOpenChange={resetDialog}>
 		<Drawer.Content>
 			<Drawer.Header class="text-left">
 				<Drawer.Title>{modalText.title}</Drawer.Title>
@@ -233,12 +291,13 @@
 			</Drawer.Header>
 			<form
 				method="POST"
-				action="?/createTransaction" 
+				action={$currentSelectedTransaction !== null ? '?/editTransaction' : '?/createTransaction'}
 				class="grid items-start gap-4 px-4"
 				use:enhance
 				enctype="multipart/form-data"
 				on:submit={validateFormAndManageDialog}
 			>
+				<input type="hidden" bind:value={$formData.id} name="id" />
 				<div class="flex gap-4">
 					<Form.Field {form} name="title" class="flex-grow">
 						<Form.Control let:attrs>
@@ -258,7 +317,7 @@
 				<Form.Field {form} name="document">
 					<Form.Control let:attrs>
 						<Form.Label>Import PDF</Form.Label>
-						<Input type="file" {...attrs} on:change="{handleFileChange}" />
+						<Input type="file" {...attrs} on:change={handleFileChange} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

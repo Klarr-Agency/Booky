@@ -11,6 +11,7 @@
 </script>
 
 <div class=" h-full flex-1 flex-col space-y-8 p-8 md:flex">
-	<TransactionForm data={formData} />
+	<!-- Maybe I should add the selected row in the store in data-table-row-actions instead of passing all the transactions here -->
+	<TransactionForm data={formData} createdTransactions={transactionData} />
 	<DataTable data={transactionData} />
 </div>

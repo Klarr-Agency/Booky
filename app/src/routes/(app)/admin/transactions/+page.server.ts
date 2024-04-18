@@ -55,6 +55,40 @@ export const actions: Actions = {
             console.log('Error on create transactions: ', err);
         }
     },
+    editTransaction: async ({ request, locals }) => {
+        const formData = await request.formData();
+        const form = await superValidate(formData, zod(formSchema));
+        if (!form.valid) {
+            return fail(400, {
+                form,
+            });
+        }
+
+        try {
+            // Check if authStore.model is not null
+            if (!locals.pb.authStore.model) {
+                console.log('No authenticated user found.');
+                return fail(401, { message: 'No authenticated user found.' });
+            }
+
+            const userId = locals.pb.authStore.model.id;
+
+            const data = {
+                "userId": userId,
+                "title": form.data.title as string,
+                "document": form.data.document,
+                "type": form.data.type as string,
+                "date": form.data.date,
+                "receiptNumber": form.data.receiptNumber as string,
+                "amount": form.data.amount as number,
+                "currency": form.data.currency as string
+            };
+
+            await locals.pb.collection('transactions').update(form.data.id as string, data);
+        } catch (err) {
+            console.log('Error on create transactions: ', err);
+        }
+    },
     deleteTransaction: async ({ request, locals }) => {
         const formData = await request.formData();
         const transactionId = formData.get('transactionId');

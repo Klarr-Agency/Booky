@@ -4,6 +4,7 @@ const today = new Date();
 const allowedFileTypes = ["image/jpeg", "application/pdf", "image/png"];
 
 export const formSchema = z.object({
+    id: z.string().optional(),
     receiptNumber: z.string(),
     title: z.string(),
     document: z.instanceof(File).optional().refine(file => {
