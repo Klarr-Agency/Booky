@@ -47,7 +47,6 @@
 	let innerWidth: number;
 	let amountString = '';
 	let modalText: ModalText;
-
 	$: selectedTransactionType = $formData.type
 		? {
 				label: $formData.type.charAt(0).toUpperCase() + $formData.type.slice(1),
@@ -81,7 +80,6 @@
 	}
 	$: $formData.amount = convertStringToNumber(amountString);
 
-
 	function initializeFormData(transaction: FormData) {
 		$formData.id = transaction.id;
 		$formData.title = transaction.title;
@@ -91,6 +89,14 @@
 		$formData.currency = transaction.currency;
 		$formData.amount = transaction.amount;
 		amountString = transaction.amount.toString();
+		selectedTransactionType = {
+			label: $formData.type.charAt(0).toUpperCase() + $formData.type.slice(1),
+			value: $formData.type
+		};
+		selectedCurrency = {
+			label: $formData.currency.toUpperCase(),
+			value: $formData.currency
+		};
 	}
 
 	function handleDateChange(event: CustomEvent) {
