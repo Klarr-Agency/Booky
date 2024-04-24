@@ -26,11 +26,19 @@
 
 	export let data: Transactions[];
 
-	function formatDate(dateString:string) {
-		const date = new Date(dateString);
-		const day = date.getDate().toString().padStart(2, '0');
-		const month = (date.getMonth() + 1).toString().padStart(2, '0'); // January is 0!
-		const year = date.getFullYear();
+	function formatDate(dateString: string) {
+		// Split the dateString by the space to ignore the time part
+		const datePart = dateString.split(' ')[0];
+
+		// Create a date object from the date part
+		const date = new Date(datePart);
+
+		// Extract the day, month, and year components
+		const day = date.getUTCDate().toString().padStart(2, '0');
+		const month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // January is 0
+		const year = date.getUTCFullYear();
+
+		// Return the formatted string
 		return `${day}/${month}/${year}`;
 	}
 
@@ -93,7 +101,7 @@
 			cell: ({ value, row }) => {
 				if (row.isData()) {
 					return createRender(DataTableDateCell, {
-						value:formatDate(value)
+						value: formatDate(value)
 					});
 				}
 				return formatDate(value);
