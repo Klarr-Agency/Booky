@@ -11,6 +11,19 @@
 	import { formSchema, type FormSchema } from './schema';
 	import { currentSelectedTransaction, isDialogOpen, formSubmitted } from './store';
 	import { convertStringToNumber } from '$lib/utils/utils';
+	import CalendarIcon from 'svelte-radix/Calendar.svelte';
+	import { cn } from '$lib/utils.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import {
+		CalendarDate,
+		DateFormatter,
+		type DateValue,
+		getLocalTimeZone,
+		parseDate,
+		today
+	} from '@internationalized/date';
+	import { Calendar } from '$lib/components/ui/calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 
 	export let data: SuperValidated<Infer<FormSchema>>;
 	export let createdTransactions: FormData[];
@@ -26,7 +39,7 @@
 		receiptNumber: string;
 		title: string;
 		type: 'revenue' | 'expense';
-		date: Date;
+		date: Date | string;
 		currency: string;
 		amount: number;
 		document?: File | undefined;
@@ -80,14 +93,17 @@
 	}
 	$: $formData.amount = convertStringToNumber(amountString);
 
+	const df = new DateFormatter('en-US', {
+		dateStyle: 'long'
+	});
+
+	let value: DateValue | undefined;
+	let placeholder: DateValue = today(getLocalTimeZone());
+	$: value = $formData.date ? parseDate($formData.date) : undefined;
+
 	function initializeFormData(transaction: FormData) {
-		$formData.id = transaction.id;
-		$formData.title = transaction.title;
-		$formData.receiptNumber = transaction.receiptNumber;
-		$formData.type = transaction.type;
-		$formData.date = transaction.date;
-		$formData.currency = transaction.currency;
-		$formData.amount = transaction.amount;
+		const date = transaction.date;
+		$formData = { ...transaction, date: typeof date === 'string' && date.includes(' ') ? date.split(' ')[0] : String(date) };
 		amountString = transaction.amount.toString();
 		selectedTransactionType = {
 			label: $formData.type.charAt(0).toUpperCase() + $formData.type.slice(1),
@@ -97,24 +113,6 @@
 			label: $formData.currency.toUpperCase(),
 			value: $formData.currency
 		};
-	}
-
-	function handleDateChange(event: CustomEvent) {
-		const dateDetail = event.detail.date;
-		// Check if the necessary properties are available
-		if (
-			!dateDetail ||
-			typeof dateDetail.year !== 'number' ||
-			typeof dateDetail.month !== 'number' ||
-			typeof dateDetail.day !== 'number'
-		) {
-			console.error('Date detail is missing or incorrect:', dateDetail);
-			// Handle the case where the date is not as expected
-			return;
-		}
-
-		// Since month in JavaScript Date is 0-indexed, subtract 1 from the month
-		$formData.date = new Date(dateDetail.year, dateDetail.month - 1, dateDetail.day);
 	}
 
 	function handleFileChange(event: Event) {
@@ -171,7 +169,7 @@
 				receiptNumber: '',
 				title: '',
 				type: 'revenue',
-				date: new Date(),
+				date: '',
 				currency: '',
 				amount: 0,
 				document: undefined
@@ -231,7 +229,36 @@
 					<Form.Control let:attrs>
 						<div class="grid gap-2">
 							<Form.Label>Transaction Date</Form.Label>
-							<DatePicker on:dateChange={handleDateChange} />
+							<Popover.Root>
+								<Popover.Trigger
+									{...attrs}
+									class={cn(
+										buttonVariants({ variant: 'outline' }),
+										'justify-start pl-4 text-left font-normal',
+										!value && 'text-muted-foreground'
+									)}
+								>
+									{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+									<CalendarIcon class="ml-auto h-4 w-4 opacity-50" />
+								</Popover.Trigger>
+								<Popover.Content class="w-auto p-0" side="top">
+									<Calendar
+										{value}
+										bind:placeholder
+										minValue={new CalendarDate(1900, 1, 1)}
+										maxValue={today(getLocalTimeZone())}
+										calendarLabel="Date of birth"
+										initialFocus
+										onValueChange={(v) => {
+											if (v) {
+												$formData.date = v.toString();
+											} else {
+												$formData.date = '';
+											}
+										}}
+									/>
+								</Popover.Content>
+							</Popover.Root>
 						</div>
 						<input hidden bind:value={$formData.date} name={attrs.name} />
 					</Form.Control>
@@ -337,7 +364,36 @@
 					<Form.Control let:attrs>
 						<div class="grid gap-2">
 							<Form.Label>Transaction Date</Form.Label>
-							<DatePicker on:dateChange={handleDateChange} />
+							<Popover.Root>
+								<Popover.Trigger
+									{...attrs}
+									class={cn(
+										buttonVariants({ variant: 'outline' }),
+										'justify-start pl-4 text-left font-normal',
+										!value && 'text-muted-foreground'
+									)}
+								>
+									{value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date'}
+									<CalendarIcon class="ml-auto h-4 w-4 opacity-50" />
+								</Popover.Trigger>
+								<Popover.Content class="w-auto p-0" side="top">
+									<Calendar
+										{value}
+										bind:placeholder
+										minValue={new CalendarDate(1900, 1, 1)}
+										maxValue={today(getLocalTimeZone())}
+										calendarLabel="Date of birth"
+										initialFocus
+										onValueChange={(v) => {
+											if (v) {
+												$formData.date = v.toString();
+											} else {
+												$formData.date = '';
+											}
+										}}
+									/>
+								</Popover.Content>
+							</Popover.Root>
 						</div>
 						<input hidden bind:value={$formData.date} name={attrs.name} />
 					</Form.Control>

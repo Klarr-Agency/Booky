@@ -13,9 +13,7 @@ export const formSchema = z.object({
         message: "Only JPEG, PDF, and PNG files are allowed.",
     }),
     type: z.enum(['revenue', 'expense']),
-    date: z.date().refine(date => date <= today, {
-        message: "Date cannot be in the future.",
-    }),
+    date: z.string(),
     currency: z.string(),
     amount: z.number()
         .positive("Amount must be a positive number.")
