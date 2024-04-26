@@ -11,10 +11,11 @@ export const formSchema = z.object({
         return file ? allowedFileTypes.includes(file.type) : true;
     }, {
         message: "Only JPEG, PDF, and PNG files are allowed.",
-    }),
+    }).optional(),
     type: z.enum(['revenue', 'expense']),
-    date: z.string(),
-    currency: z.string(),
+    date: z.string()
+        .min(1, "Date is required."),
+    currency: z.enum(['usd', 'cad']),
     amount: z.number()
         .positive("Amount must be a positive number.")
         .min(0.01, "Amount must be at least 0.01 USD.")
