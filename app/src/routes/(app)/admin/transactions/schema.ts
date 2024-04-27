@@ -7,7 +7,7 @@ export const formSchema = z.object({
     id: z.string().optional(),
     receiptNumber: z.string(),
     title: z.string(),
-    document: z.instanceof(File).optional().refine(file => {
+    document: z.instanceof(File).nullable().refine(file => {
         return file ? allowedFileTypes.includes(file.type) : true;
     }, {
         message: "Only JPEG, PDF, and PNG files are allowed.",
