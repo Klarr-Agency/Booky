@@ -21,7 +21,7 @@ Release v0.1
 ### Transactions
 - [x] Display
 - [x] Create
-- [ ] Edit
+- [x] Edit
 - [x] Delete
 - [x] Upload document
 - [x] Download document

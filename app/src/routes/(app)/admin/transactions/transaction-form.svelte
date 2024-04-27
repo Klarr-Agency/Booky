@@ -2,7 +2,6 @@
 	import { type Infer, type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import DatePicker from '$lib/components/ui/date-picker/data-picker.svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
@@ -40,9 +39,9 @@
 		title: string;
 		type: 'revenue' | 'expense';
 		date: Date | string;
-		currency: string;
+		currency: 'usd' | 'cad';
 		amount: number;
-		document?: File | undefined;
+		document?: File | null;
 	};
 
 	type ValidFieldNames<T> = {
@@ -60,6 +59,7 @@
 	let innerWidth: number;
 	let amountString = '';
 	let modalText: ModalText;
+	$: hideDocumentDisplay = false;
 	$: selectedTransactionType = $formData.type
 		? {
 				label: $formData.type.charAt(0).toUpperCase() + $formData.type.slice(1),
@@ -101,9 +101,15 @@
 	let placeholder: DateValue = today(getLocalTimeZone());
 	$: value = $formData.date ? parseDate($formData.date) : undefined;
 
-	function initializeFormData(transaction: FormData) {
+	async function initializeFormData(transaction: FormData) {
 		const date = transaction.date;
-		$formData = { ...transaction, date: typeof date === 'string' && date.includes(' ') ? date.split(' ')[0] : String(date) };
+		// Remove document from spread object
+		const { document, ...otherFields } = transaction;
+
+		$formData = {
+			...otherFields,
+			date: typeof date === 'string' && date.includes(' ') ? date.split(' ')[0] : String(date)
+		};
 		amountString = transaction.amount.toString();
 		selectedTransactionType = {
 			label: $formData.type.charAt(0).toUpperCase() + $formData.type.slice(1),
@@ -115,6 +121,27 @@
 		};
 	}
 
+	async function getDocument(transactionId: string) {
+		const formData = new FormData();
+		formData.append('download', transactionId);
+
+		try {
+			const response = await fetch('?/downloadDocument', {
+				method: 'POST',
+				body: formData
+			});
+			const result = await response.json();
+			const dataObject = JSON.parse(result.data);
+			const url = dataObject[3];
+
+			if (url) {
+				return url;
+			}
+		} catch (error) {
+			console.error('Failed to fetch:', error);
+		}
+	}
+
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement; // Cast the target to HTMLInputElement
 		if (input && input.files && input.files.length > 0) {
@@ -123,11 +150,11 @@
 				$formData.document = file; // Assign the file if it is a File instance
 			} else {
 				console.error('The selected file is not an instance of File.');
-				$formData.document = undefined; // Set the file to undefined if not a File instance
+				$formData.document = null; // Set the file to undefined if not a File instance
 			}
 		} else {
 			console.error('No file selected or the file input is not properly configured.');
-			$formData.document = undefined; // Set the file to undefined if no files are selected
+			$formData.document = null; // Set the file to undefined if no files are selected
 		}
 	}
 
@@ -170,12 +197,18 @@
 				title: '',
 				type: 'revenue',
 				date: '',
-				currency: '',
+				currency: 'usd',
 				amount: 0,
 				document: undefined
 			};
 		}
 		$formSubmitted = false;
+		hideDocumentDisplay = false;
+	}
+
+	function hideDocument() {
+		$formData.document = null;
+		hideDocumentDisplay = true;
 	}
 </script>
 
@@ -222,6 +255,36 @@
 					<Form.Control let:attrs>
 						<Form.Label>Import PDF</Form.Label>
 						<Input type="file" {...attrs} on:change={handleFileChange} />
+						{#if $currentSelectedTransaction !== null}
+							{#if $formData.id !== undefined}
+								{#await getDocument($formData.id) then document}
+									{#if document && !hideDocumentDisplay}
+										<div class="flex justify-between gap-2">
+											<a
+												href={document}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-blue-600 underline"
+											>
+												View document
+											</a>
+											<button
+												type="button"
+												on:click={() => {
+													hideDocument();
+												}}
+												class="text-red-600 underline"
+											>
+												Delete document
+											</button>
+											<input hidden bind:value={$formData.document} />
+										</div>
+									{/if}
+								{:catch error}
+									<p>Failed to load document: {error.message}</p>
+								{/await}
+							{/if}
+						{/if}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -247,7 +310,7 @@
 										bind:placeholder
 										minValue={new CalendarDate(1900, 1, 1)}
 										maxValue={today(getLocalTimeZone())}
-										calendarLabel="Date of birth"
+										calendarLabel="Date of transaction"
 										initialFocus
 										onValueChange={(v) => {
 											if (v) {
@@ -357,6 +420,36 @@
 					<Form.Control let:attrs>
 						<Form.Label>Import PDF</Form.Label>
 						<Input type="file" {...attrs} on:change={handleFileChange} />
+						{#if $currentSelectedTransaction !== null}
+							{#if $formData.id !== undefined}
+								{#await getDocument($formData.id) then document}
+									{#if document && !hideDocumentDisplay}
+										<div class="flex justify-between gap-2">
+											<a
+												href={document}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-blue-600 underline"
+											>
+												View document
+											</a>
+											<button
+												type="button"
+												on:click={() => {
+													hideDocument();
+												}}
+												class="text-red-600 underline"
+											>
+												Delete document
+											</button>
+											<input hidden bind:value={$formData.document} />
+										</div>
+									{/if}
+								{:catch error}
+									<p>Failed to load document: {error.message}</p>
+								{/await}
+							{/if}
+						{/if}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -382,7 +475,7 @@
 										bind:placeholder
 										minValue={new CalendarDate(1900, 1, 1)}
 										maxValue={today(getLocalTimeZone())}
-										calendarLabel="Date of birth"
+										calendarLabel="Date of transaction"
 										initialFocus
 										onValueChange={(v) => {
 											if (v) {
