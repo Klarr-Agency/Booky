@@ -5,3 +5,19 @@ export function convertStringToNumber(input: string): number {
     }
     return result;
 }
+
+export function formatDate(dateString: string) {
+    // Split the dateString by the space to ignore the time part
+    const datePart = dateString.split(' ')[0];
+
+    // Create a date object from the date part
+    const date = new Date(datePart);
+
+    // Extract the day, month, and year components
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // January is 0
+    const year = date.getUTCFullYear();
+
+    // Return the formatted string
+    return `${day}/${month}/${year}`;
+}
