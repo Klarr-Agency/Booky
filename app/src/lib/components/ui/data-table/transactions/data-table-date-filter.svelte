@@ -24,7 +24,7 @@
 	let now = today(getLocalTimeZone());
 	let currentMonthStart = startOfMonth(now);
     let currentMonthEnd = endOfMonth(now);
-    let value: DateRange | undefined = {
+    export let value: DateRange | undefined = {
         start: currentMonthStart,
         end: currentMonthEnd
     };
@@ -72,9 +72,6 @@
                     start: startOfYear(lastYear),
                     end: endOfYear(lastYear)
                 };
-                break;
-            case 'all_time':
-                value = undefined;
                 break;
         }
     }

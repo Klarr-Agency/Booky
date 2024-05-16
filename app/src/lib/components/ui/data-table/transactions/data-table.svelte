@@ -42,15 +42,42 @@
 		return `${day}/${month}/${year}`;
 	}
 
+	function toDate(dateObj: { year: number; month: number; day: number }): Date {
+		return new Date(dateObj.year, dateObj.month - 1, dateObj.day);
+	}
+
+	type FilterValue =
+		| string
+		| {
+				start: { year: number; month: number; day: number } | undefined;
+				end: { year: number; month: number; day: number } | undefined;
+		  };
+
 	const table = createTable(readable(data), {
 		select: addSelectedRows(),
-		sort: addSortBy({
-			toggleOrder: ['asc', 'desc']
-		}),
+		sort: addSortBy({ toggleOrder: ['asc', 'desc'] }),
 		page: addPagination(),
 		filter: addTableFilter({
-			fn: ({ filterValue, value }) => {
-				return value.toLowerCase().includes(filterValue.toLowerCase());
+			fn: ({ filterValue, value }: { filterValue: FilterValue; value: string }) => {
+
+				if (
+					filterValue &&
+					typeof filterValue === 'object' &&
+					'start' in filterValue &&
+					'end' in filterValue &&
+					filterValue.start &&
+					filterValue.end
+				) {
+					const date = new Date(value);
+					const startDate = toDate(filterValue.start);
+					const endDate = toDate(filterValue.end);
+
+					if (startDate && endDate) {
+						return date >= startDate && date <= endDate;
+					}
+				}
+
+				return value.toLowerCase().includes((filterValue as string).toLowerCase());
 			}
 		}),
 		colFilter: addColumnFilters(),
@@ -76,23 +103,13 @@
 					class: 'translate-y-[2px]'
 				});
 			},
-			plugins: {
-				sort: {
-					disable: true
-				}
-			}
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'receiptNumber',
-			header: () => {
-				return '# Transaction';
-			},
+			header: () => '# Transaction',
 			id: 'receiptNumber',
-			plugins: {
-				sort: {
-					disable: true
-				}
-			}
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			accessor: 'date',
@@ -105,6 +122,29 @@
 					});
 				}
 				return formatDate(value);
+			},
+			plugins: {
+				colFilter: {
+					fn: ({ filterValue, value }: { filterValue: FilterValue; value: string }) => {
+						if (
+							filterValue &&
+							typeof filterValue === 'object' &&
+							filterValue.start &&
+							filterValue.end
+						) {
+							const date = new Date(value);
+							const startDate = toDate(filterValue.start);
+							const endDate = toDate(filterValue.end);
+
+							if (startDate && endDate) {
+								return date >= startDate && date <= endDate;
+							}
+						}
+						return true;
+					},
+					initialFilterValue: { start: undefined, end: undefined },
+					render: ({ filterValue }) => get(filterValue)
+				}
 			}
 		}),
 		table.column({
@@ -150,25 +190,16 @@
 			accessor: 'type',
 			id: 'type',
 			header: 'Type',
-			cell: ({ value }) => {
-				return createRender(DataTableTypeCell, {
-					value
-				});
-			},
+			cell: ({ value }) => createRender(DataTableTypeCell, { value }),
 			plugins: {
 				colFilter: {
 					fn: ({ filterValue, value }) => {
 						if (filterValue.length === 0) return true;
 						if (!Array.isArray(filterValue) || typeof value !== 'string') return true;
-
-						return filterValue.some((filter) => {
-							return value.includes(filter);
-						});
+						return filterValue.some(filter => value.includes(filter));
 					},
 					initialFilterValue: [],
-					render: ({ filterValue }) => {
-						return get(filterValue);
-					}
+					render: ({ filterValue }) => get(filterValue)
 				}
 			}
 		}),
@@ -179,9 +210,7 @@
 		}),
 		table.display({
 			id: 'actions',
-			header: () => {
-				return '';
-			},
+			header: () => '',
 			cell: ({ row }) => {
 				if (row.isData() && row.original) {
 					return createRender(DataTableRowActions, {
@@ -194,7 +223,6 @@
 	]);
 
 	const tableModel = table.createViewModel(columns);
-
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs } = tableModel;
 </script>
 
@@ -245,7 +273,7 @@
 						</Subscribe>
 					{/each}
 				{:else}
-					<Table.Row>
+						<Table.Row>
 						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
 					</Table.Row>
 				{/if}
