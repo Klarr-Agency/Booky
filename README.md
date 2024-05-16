@@ -25,7 +25,7 @@ Release v0.1
 - [x] Delete
 - [x] Upload document
 - [x] Download document
-- [ ] Date filter
+- [x] Date filter
 ### Transaction label
 - [ ] Create
 - [ ] Delete (default to general label)
