@@ -21,6 +21,14 @@
 	} from './index.js';
 	/* Default import */
 	import { DataTableCheckbox } from '../index.js';
+	import {
+		getLocalTimeZone,
+		today,
+		startOfMonth,
+		endOfMonth,
+
+	} from '@internationalized/date';
+	let now = today(getLocalTimeZone());
 
 	import * as Table from '$lib/components/ui/table';
 
@@ -142,7 +150,7 @@
 						}
 						return true;
 					},
-					initialFilterValue: { start: undefined, end: undefined },
+					initialFilterValue: { start: startOfMonth(now), end: endOfMonth(now)  },
 					render: ({ filterValue }) => get(filterValue)
 				}
 			}

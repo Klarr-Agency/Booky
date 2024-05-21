@@ -29,9 +29,6 @@
 		($filterValues.type && $filterValues.type.length > 0) ||
 		($filterValues.date && $filterValues.date.start && $filterValues.date.end);
 
-	if (!$filterValues.date) {
-		$filterValues.date = { start: undefined, end: undefined };
-	}
 </script>
 
 <div class="flex items-center justify-between">
