@@ -8,7 +8,7 @@
 	import * as Drawer from '$lib/components/ui/drawer';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { formSchema, type FormSchema } from './schema';
-	import { currentSelectedTransaction, isDialogOpen, formSubmitted } from './store';
+	import { currentSelectedTransaction, isTransactionDialogOpen, formSubmitted } from './store';
 	import { convertStringToNumber } from '$lib/utils/utils';
 	import CalendarIcon from 'svelte-radix/Calendar.svelte';
 	import { cn } from '$lib/utils.js';
@@ -176,7 +176,7 @@
 		}
 
 		if (allFieldsValid) {
-			$isDialogOpen = false;
+			$isTransactionDialogOpen = false;
 
 			setTimeout(function () {
 				location.reload();
@@ -187,9 +187,9 @@
 	}
 
 	function resetDialog() {
-		if ($isDialogOpen && !$formSubmitted) {
+		if ($isTransactionDialogOpen && !$formSubmitted) {
 			currentSelectedTransaction.set(null);
-			$isDialogOpen = false;
+			$isTransactionDialogOpen = false;
 			amountString = '';
 			$formData = {
 				id: '',
@@ -214,11 +214,8 @@
 
 <svelte:window bind:innerWidth />
 
-<div class="grid justify-start gap-2">
-	<Button on:click={() => ($isDialogOpen = true)} class="ml-auto gap-1">Add transaction</Button>
-</div>
 {#if innerWidth > 768}
-	<Dialog.Root bind:open={$isDialogOpen} onOpenChange={resetDialog}>
+	<Dialog.Root bind:open={$isTransactionDialogOpen} onOpenChange={resetDialog}>
 		<Dialog.Content class="sm:max-w-[600px]">
 			<Dialog.Header>
 				<Dialog.Title>{modalText.title}</Dialog.Title>
@@ -383,7 +380,7 @@
 		</Dialog.Content>
 	</Dialog.Root>
 {:else if innerWidth < 768}
-	<Drawer.Root bind:open={$isDialogOpen} onOpenChange={resetDialog}>
+	<Drawer.Root bind:open={$isTransactionDialogOpen} onOpenChange={resetDialog}>
 		<Drawer.Content>
 			<Drawer.Header class="text-left">
 				<Drawer.Title>{modalText.title}</Drawer.Title>

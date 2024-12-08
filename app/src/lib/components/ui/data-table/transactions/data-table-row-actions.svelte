@@ -6,7 +6,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import {
 		currentSelectedTransaction,
-		isDialogOpen
+		isTransactionDialogOpen
 	} from '../../../../../routes/(app)/admin/transactions/store';
 
 	export let row: Transactions;
@@ -39,7 +39,7 @@
 	function editTransaction() {
 		return () => {
 			currentSelectedTransaction.set(transaction.id);
-			isDialogOpen.set(true);
+			isTransactionDialogOpen.set(true);
 		};
 	}
 </script>

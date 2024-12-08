@@ -22,3 +22,11 @@ export const formSchema = z.object({
 });
 
 export type FormSchema = typeof formSchema;
+
+export const labelSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(1, "Label name is required."),
+    color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Color must be a valid hex code."),
+});
+
+export type LabelSchema = typeof labelSchema;

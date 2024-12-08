@@ -27,8 +27,9 @@ Release v0.1
 - [x] Download document
 - [x] Date filter
 ### Transaction label
-- [ ] Create
-- [ ] Delete (default to general label)
+- [X] Create
+- [X] Edit
+- [X] Delete (default to general label)
 - [ ] Assign
 ### Dashboard
 - [X] Display revenues/expenses
