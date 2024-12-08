@@ -21,3 +21,13 @@ export function formatDate(dateString: string) {
     // Return the formatted string
     return `${day}/${month}/${year}`;
 }
+
+export interface DateObject {
+    year: number;
+    month: number;
+    day: number;
+}
+
+export function toDate(dateObj: DateObject): Date {
+    return new Date(Date.UTC(dateObj.year, dateObj.month - 1, dateObj.day, 0, 0, 0));
+}
