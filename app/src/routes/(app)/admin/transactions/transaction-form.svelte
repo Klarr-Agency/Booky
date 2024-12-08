@@ -26,6 +26,8 @@
 
 	export let data: SuperValidated<Infer<FormSchema>>;
 	export let createdTransactions: FormData[];
+	export let labels: any[];
+	export let transactionLabels: any[];
 
 	type ModalText = {
 		title: string;
@@ -51,7 +53,8 @@
 	type FieldNames = ValidFieldNames<typeof formSchema.shape>;
 
 	const form = superForm(data, {
-		validators: zodClient(formSchema)
+		validators: zodClient(formSchema),
+		dataType: 'json'
 	});
 
 	const { form: formData, enhance } = form;
@@ -100,6 +103,7 @@
 	let value: DateValue | undefined;
 	let placeholder: DateValue = today(getLocalTimeZone());
 	$: value = $formData.date ? parseDate($formData.date) : undefined;
+	let selectedLabel: { value: string; label: string } | undefined;
 
 	async function initializeFormData(transaction: FormData) {
 		const date = transaction.date;
@@ -119,6 +123,18 @@
 			label: $formData.currency.toUpperCase(),
 			value: $formData.currency
 		};
+
+		const transactionLabel = transactionLabels.find((tl) => tl.transactionId === transaction.id);
+		if (transactionLabel) {
+			const label = labels.find((l) => l.id === transactionLabel.labelId);
+			if (label) {
+				selectedLabel = { value: label.id, label: label.name };
+				$formData.labelId = label.id;
+			}
+		} else {
+			selectedLabel = undefined;
+			$formData.labelId = '';
+		}
 	}
 
 	async function getDocument(transactionId: string) {
@@ -201,6 +217,8 @@
 				amount: 0,
 				document: undefined
 			};
+			selectedLabel = undefined;
+			$formData.labelId = '';
 		}
 		$formSubmitted = false;
 		hideDocumentDisplay = false;
@@ -342,6 +360,37 @@
 							</Select.Content>
 						</Select.Root>
 						<input hidden bind:value={$formData.type} name={attrs.name} />
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="labelId">
+					<Form.Control let:attrs>
+						<Form.Label>Label</Form.Label>
+						<Select.Root
+							selected={selectedLabel}
+							onSelectedChange={(v) => {
+								v && ($formData.labelId = v.value);
+							}}
+						>
+							<Select.Trigger {...attrs}>
+								<Select.Value placeholder="Select a label" />
+							</Select.Trigger>
+							<Select.Content>
+								<Select.Item value="">No label</Select.Item>
+								{#each labels as label}
+									<Select.Item value={label.id}>
+										<div class="flex items-center">
+											<div
+												class="mr-2 h-3 w-3 rounded-full"
+												style="background-color: {label.color};"
+											></div>
+											{label.name}
+										</div>
+									</Select.Item>
+								{/each}
+							</Select.Content>
+						</Select.Root>
+						<input hidden bind:value={$formData.labelId} name={attrs.name} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

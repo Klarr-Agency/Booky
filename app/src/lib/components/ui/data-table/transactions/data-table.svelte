@@ -17,7 +17,8 @@
 		DataTablePagination,
 		DataTableRowActions,
 		DataTableTitleCell,
-		DataTableDateCell
+		DataTableDateCell,
+		DataTableLabelCell
 	} from './index.js';
 	/* Default import */
 	import { DataTableCheckbox } from '../index.js';
@@ -33,6 +34,8 @@
 	import * as Table from '$lib/components/ui/table';
 
 	export let data: Transactions[];
+	export let labels: any[];
+	export let transactionLabels: any[];
 
 	function formatDate(dateString: string) {
 		// Split the dateString by the space to ignore the time part
@@ -210,6 +213,22 @@
 					render: ({ filterValue }) => get(filterValue)
 				}
 			}
+		}),
+		table.column({
+			accessor: (row) => {
+				if (!row || !row.id || !Array.isArray(transactionLabels) || !Array.isArray(labels)) {
+					return '';
+				}
+				const transactionLabel = transactionLabels.find((tl) => tl.transactionId === row.id);
+				if (transactionLabel && transactionLabel.labelId) {
+					const label = labels.find((l) => l.id === transactionLabel.labelId);
+					return label ? label.name : '';
+				}
+				return '';
+			},
+			header: 'Label',
+			id: 'label',
+			cell: ({ value }) => createRender(DataTableLabelCell, { value, labels: labels || [] })
 		}),
 		table.column({
 			accessor: 'amount',

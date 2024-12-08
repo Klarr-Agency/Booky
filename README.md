@@ -30,7 +30,7 @@ Release v0.1
 - [X] Create
 - [X] Edit
 - [X] Delete (default to general label)
-- [ ] Assign
+- [X] Assign
 ### Dashboard
 - [X] Display revenues/expenses
 - [X] Display latest transactions

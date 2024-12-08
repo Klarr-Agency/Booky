@@ -5,7 +5,7 @@
 	import LabelForm from './label-form.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Settings, ChevronDown } from 'lucide-svelte';
+	import { ChevronDown } from 'lucide-svelte';
 	import { isTransactionDialogOpen, isLabelDialogOpen, labelDialogState } from './store.js';
 
 	export let data: PageData;
@@ -14,6 +14,7 @@
 	let labelFormData: any = data.labelForm;
 	let labelData: any = data.props.labels;
 	let transactionData: any = data.props.transactions;
+	let transactionLabelData: any = data.props.transactionLabels;
 
 	function labelDialogStates(state: string) {
 		if (state === 'edit') {
@@ -29,7 +30,12 @@
 
 <div class=" h-full flex-1 flex-col space-y-8 p-8 md:flex">
 	<!-- Maybe I should add the selected row in the store in data-table-row-actions instead of passing all the transactions here -->
-	<TransactionForm data={formData} createdTransactions={transactionData} />
+	<TransactionForm
+		data={formData}
+		createdTransactions={transactionData}
+		labels={labelData}
+		transactionLabels={transactionLabelData}
+	/>
 	<LabelForm data={labelFormData} labels={labelData} />
 	<div class="flex items-center justify-between">
 		<div class="flex items-center gap-2">
@@ -69,5 +75,5 @@
 			</Button>
 		</div>
 	</div>
-	<DataTable data={transactionData} />
+	<DataTable data={transactionData} labels={labelData} transactionLabels={transactionLabelData} />
 </div>

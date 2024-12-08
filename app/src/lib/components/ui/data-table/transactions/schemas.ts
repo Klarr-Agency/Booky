@@ -6,7 +6,7 @@ export const transactionSchema = z.object({
 	id: z.string(),
 	receiptNumber: z.string(),
     title: z.string(),
-	label: z.string(),
+	label: z.string().optional(),
     document: z.string(),
     type: z.string(),
     date: z.string(),

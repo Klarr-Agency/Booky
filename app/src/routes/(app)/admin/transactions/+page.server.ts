@@ -41,19 +41,22 @@ export const actions: Actions = {
             }
 
             const userId = locals.pb.authStore.model.id;
+            const { labelId, ...formDataWithoutLabel } = form.data;
 
             const data = {
-                "userId": userId,
-                "title": form.data.title as string,
-                "document": form.data.document,
-                "type": form.data.type as string,
-                "date": form.data.date,
-                "receiptNumber": form.data.receiptNumber as string,
-                "amount": form.data.amount as number,
-                "currency": form.data.currency as string
+                ...formDataWithoutLabel,
+                userId
             };
 
-            await locals.pb.collection('transactions').create(data);
+            const transaction = await locals.pb.collection('transactions').create(data);
+
+            if (labelId) {
+                await locals.pb.collection('transactionLabels').create({
+                    transactionId: transaction.id,
+                    labelId: labelId,
+                    userId: userId
+                });
+            }
         } catch (err) {
             console.log('Error on create transactions: ', err);
         }
@@ -75,19 +78,45 @@ export const actions: Actions = {
             }
 
             const userId = locals.pb.authStore.model.id;
+            const { id, labelId, ...formDataWithoutLabel } = form.data;
 
-            const data = {
-                "userId": userId,
-                "title": form.data.title as string,
-                "document": form.data.document,
-                "type": form.data.type as string,
-                "date": form.data.date,
-                "receiptNumber": form.data.receiptNumber as string,
-                "amount": form.data.amount as number,
-                "currency": form.data.currency as string
+            const transactionData = {
+                ...formDataWithoutLabel
             };
 
-            await locals.pb.collection('transactions').update(form.data.id as string, data);
+            await locals.pb.collection('transactions').update(id as string, transactionData);
+
+            // Handle label association
+            let existingLabel;
+            try {
+                existingLabel = await locals.pb.collection('transactionLabels').getFirstListItem(`transactionId="${id}" && userId="${userId}"`);
+            } catch (error) {
+                // If no existing label is found, existingLabel will remain undefined
+                console.log('No existing label found for this transaction');
+            }
+
+            if (labelId) {
+                if (existingLabel) {
+                    // If the label has changed, update it
+                    if (existingLabel.labelId !== labelId) {
+                        await locals.pb.collection('transactionLabels').update(existingLabel.id, {
+                            labelId: labelId
+                        });
+                    }
+                    // If the label is the same, do nothing
+                } else {
+                    // If there was no label before, create a new association
+                    await locals.pb.collection('transactionLabels').create({
+                        transactionId: id,
+                        labelId: labelId,
+                        userId: userId
+                    });
+                }
+            } else if (existingLabel) {
+                // If there was a label before but now it's removed, delete the association
+                await locals.pb.collection('transactionLabels').delete(existingLabel.id);
+            }
+
         } catch (err) {
             console.log('Error on create transactions: ', err);
         }

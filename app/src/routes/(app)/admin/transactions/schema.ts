@@ -7,11 +7,13 @@ export const formSchema = z.object({
     id: z.string().optional(),
     receiptNumber: z.string(),
     title: z.string(),
+    labelId: z.string().optional(),
     document: z.instanceof(File).nullable().refine(file => {
         return file ? allowedFileTypes.includes(file.type) : true;
     }, {
         message: "Only JPEG, PDF, and PNG files are allowed.",
     }).optional(),
+    pdf: z.union([z.string(), z.null()]).optional(),
     type: z.enum(['revenue', 'expense']),
     date: z.string()
         .min(1, "Date is required."),
