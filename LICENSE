@@ -1,0 +1,34 @@
+Not-for-Profit Open Source License (NPOSL) 1.0
+License Copyright © 2023 Wriar Development, Version 1.0, February 2023
+Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed under the same name.
+ 
+
+1. Definitions
+"Source code" means the human-readable form of a program's instructions, design documents, or other technical information that allows users to modify or replicate the program.
+"Application" means any software or product that includes or uses the source code, in whole or in part.
+"Owner" means the individual or entity that holds the copyright or other proprietary rights to the source code.
+
+2. License
+Subject to the terms and conditions of this License, the Owner hereby grants a non-exclusive, perpetual, worldwide license to use, copy, modify, and distribute the source code, provided that:
+	a. The application is not-for-profit and is distributed under the same terms and conditions as this License;
+	b. The application includes a prominent notice that it includes source code licensed under the NPOSL;
+	c. The application includes a copy of this License;
+	d. The application does not contain any third-party proprietary software that would cause the application or the source code to be subject to any other license terms or restrictions.
+
+3. Exclusions
+The Owner reserves all rights not expressly granted in this License, including the right to use, modify, and distribute the source code for any purpose, including commercial purposes.
+
+4. Disclaimer of Warranties
+The source code is provided "as is," without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement. In no event shall the Owner be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the source code or the use or other dealings in the source code.
+
+5. Termination
+This License and the rights granted hereunder will terminate automatically if the licensee fails to comply with any term or condition of this License. Upon termination, the licensee shall immediately cease all use of the source code and destroy all copies of the source code in its possession or control.
+
+6. Governing Law
+This License shall be governed by and construed in accordance with the laws of the jurisdiction that has the most significant relationship to the license and the parties involved, without regard to its conflict of laws provisions.
+
+7. Entire Agreement
+This License constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior or contemporaneous communications and proposals, whether oral or written, between the parties with respect to such subject matter.
+
+8. Acceptance
+By using, copying, or modifying the source code, the licensee agrees to be bound by the terms and conditions of this License.
