@@ -39,3 +39,15 @@ Release v0.1
 ***
 Release v1
 ***
+This project was created to assist developers who want to start a business but don't have the budget for accounting software. This app can serve as a valuable starting point for organizing your expenses and revenue. Additionally, you can add more functionalities as needed.
+
+We offer a solution with more functionality at meetbooky.com, featuring both a one-time payment option and a pay-as-you-go product. While many solutions today rely on subscription-based plans, we’ve chosen a different approach to ensure that our product scales with your needs.
+
+## Pro Functionality
+- Export transactions to Excel format
+- Pre-fill fields on PDF imports
+- Include administration code on labels for tax reports
+- Automatically import your Stripe transactions with one click
+- Import invoices from Gmail or Outlook
+- Create tax presets based on your country and/or state
+- Capture photos of receipts
